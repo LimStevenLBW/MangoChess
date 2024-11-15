@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1910123496562498906}
   - component: {fileID: 7917216393754383782}
   - component: {fileID: 7877066119227335643}
+  - component: {fileID: -5549854375073390776}
   m_Layer: 0
   m_Name: QueenWhite
   m_TagString: Untagged
@@ -135,3 +136,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.4843664, y: 9.353714, z: 4.4843664}
   m_Center: {x: -0.00000011920929, y: 4.676861, z: -0.00000011920929}
+--- !u!114 &-5549854375073390776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3196525161188695644}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 4
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
