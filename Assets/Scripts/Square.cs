@@ -6,6 +6,8 @@ public class Square : MonoBehaviour
 {
     [SerializeField] private Material defaultMat;
     [SerializeField] private Material highlightMat;
+    [SerializeField] private Piece defaultPiece;
+    [SerializeField] private Piece piece;
 
     void OnMouseOver()
     {
@@ -22,7 +24,11 @@ public class Square : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (defaultPiece == null) return;
+        Vector3 pos = transform.position;
+        pos.y += 4.2f;
+
+        Piece piece = Instantiate(defaultPiece, pos, Quaternion.identity);
     }
 
     // Update is called once per frame
