@@ -11,9 +11,31 @@ public class ChessBoard : MonoBehaviour
     //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public void FENtoBitBoard(string FEN)
     {
+        bool isBoardFilled = false;
+        int row = 7;
+
         char[] fenArr = FEN.ToCharArray();
-        for(int i = 0; i <= fenArr.Length; i++)
+        int j = 0; //FEN pointer
+        int skip = 0;
+
+        for (int i = 63; i <= 0; i--)
         {
+            if(skip > 0)
+            {
+                skip--;
+                continue;
+            }
+
+            char c = fenArr[j];
+            j++;
+            if (c == '/') c = fenArr[j]; //If we see a / it's a new row
+            if (char.IsNumber(c)) skip = c - 0;
+
+            string b = "0000000000000000000000000000000000000000000000000000000000000000";
+
+
+
+
 
         }
     }
