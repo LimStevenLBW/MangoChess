@@ -513,6 +513,62 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
+--- !u!1 &1125770168
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1125770170}
+  - component: {fileID: 1125770169}
+  m_Layer: 0
+  m_Name: Chess Piece Generator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1125770169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125770168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61a332350f3cd54ab468d565f9e8a20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blk_Pawn: {fileID: 2035836762868730804, guid: 666b318be8028914b835f20ad07f8010, type: 3}
+  blk_Knight: {fileID: -7502760369232737286, guid: f97f15e94a1e0f0479847ec6dd4640ec, type: 3}
+  blk_Bishop: {fileID: 918522304609875777, guid: ae9641eac61cc7445bde60caf0946e69, type: 3}
+  blk_Rook: {fileID: 3352379505726063580, guid: a42f9065a81f60845b4cddc99ad6e4bb, type: 3}
+  blk_King: {fileID: 422384809341719060, guid: c2c13260d5b16014b9e205ec6e7010bf, type: 3}
+  blk_Queen: {fileID: -358057001023978692, guid: 795cd22a1cd964e4fb1233eaab9a1bb8, type: 3}
+  wht_Pawn: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
+  wht_Knight: {fileID: -8700641560057481563, guid: d3bcc7a705e73f44e9ee386a1af18c8b, type: 3}
+  wht_Bishop: {fileID: -4590707909018625467, guid: 65512c7ae2296f349b455ac6b48eeabc, type: 3}
+  wht_Rook: {fileID: 930493056711419380, guid: a38394676eec81547997015ed2d36733, type: 3}
+  wht_King: {fileID: -385941159313903229, guid: 47e520fd7b6fa554e8fb5cde28a94343, type: 3}
+  wht_Queen: {fileID: -159500480065779860, guid: 56dc045ae7b669344bf149dabd8e1428, type: 3}
+--- !u!4 &1125770170
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125770168}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1208838800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1314,3 +1370,4 @@ SceneRoots:
   - {fileID: 704282505}
   - {fileID: 2122046316}
   - {fileID: 1933044462}
+  - {fileID: 1125770170}

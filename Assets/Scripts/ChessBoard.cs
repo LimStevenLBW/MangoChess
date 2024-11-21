@@ -19,6 +19,8 @@ public class ChessBoard : MonoBehaviour
 
     //Starting FEN
     //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+    //rnbqkbnr/pppppppp/2/k
     public void FENtoChessBoard(string FEN)
     {
         char[] fenArr = FEN.ToCharArray();
@@ -29,17 +31,32 @@ public class ChessBoard : MonoBehaviour
         {
             for(int col = 0; col < 8; col++)
             {
-                if (skip > 0)
+                if (skip > 1) //Note that a piece instantiation is already skipped when int skip is re-assigned
                 {
+                    //Debug.Log("skip count:" + skip + "last known c was:" + fenArr[i] +", i = " + i);
                     skip--;
                     continue;
                 }
 
                 char c = fenArr[i];
                 i++;
-                if (char.IsNumber(c)) skip = c - 0;
+                if (c == '/') {
+                    c = fenArr[i];
+                    i++;
+                }
 
-                file[col].CreatePiece(row, c);
+               // Debug.Log("col" + col + ",row" + row + ",i" + i + ",c" + c);
+                if (char.IsNumber(c))
+                {
+                    skip = c - '0';
+                }
+                else
+                {
+                    file[col].CreatePiece(row, c);
+                }
+                
+
+
             }
         }
 

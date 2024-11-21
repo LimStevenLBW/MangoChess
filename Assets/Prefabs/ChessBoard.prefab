@@ -291,8 +291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &441603631222771305
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,8 +412,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &449355513832283989
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,8 +704,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &646710682715769733
 GameObject:
   m_ObjectHideFlags: 0
@@ -828,8 +825,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -159500480065779860, guid: 56dc045ae7b669344bf149dabd8e1428, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &758363645532677500
 GameObject:
   m_ObjectHideFlags: 0
@@ -950,8 +946,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &813916329879948964
 GameObject:
   m_ObjectHideFlags: 0
@@ -1072,8 +1067,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &861124250808287798
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,8 +1188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &956614940268999075
 GameObject:
   m_ObjectHideFlags: 0
@@ -1248,6 +1241,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06fdd19381b25498c728437790a825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square:
+  - {fileID: 1502397655033552395}
+  - {fileID: 2106347204690282950}
+  - {fileID: 7691507356159309350}
+  - {fileID: 2012844970696579799}
+  - {fileID: 1513698315612824976}
+  - {fileID: 4063058142209266389}
+  - {fileID: 4398205596789354500}
+  - {fileID: 8157866546933691103}
 --- !u!1 &1318364441957581610
 GameObject:
   m_ObjectHideFlags: 0
@@ -1368,8 +1370,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &1338248928551248590
 GameObject:
   m_ObjectHideFlags: 0
@@ -1490,8 +1491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &1342945929367677500
 GameObject:
   m_ObjectHideFlags: 0
@@ -1612,8 +1612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &1466494610309639328
 GameObject:
   m_ObjectHideFlags: 0
@@ -1734,8 +1733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &1611060483497264184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1856,8 +1854,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -4590707909018625467, guid: 65512c7ae2296f349b455ac6b48eeabc, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &1663263839065929859
 GameObject:
   m_ObjectHideFlags: 0
@@ -1978,8 +1975,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &1721872460983676968
 GameObject:
   m_ObjectHideFlags: 0
@@ -2100,8 +2096,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &1827362110523857932
 GameObject:
   m_ObjectHideFlags: 0
@@ -2393,8 +2388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &2055607129077204661
 GameObject:
   m_ObjectHideFlags: 0
@@ -2515,8 +2509,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &2092809470057938958
 GameObject:
   m_ObjectHideFlags: 0
@@ -2637,8 +2630,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &2179109573305115836
 GameObject:
   m_ObjectHideFlags: 0
@@ -2759,8 +2751,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &2233160800694757422
 GameObject:
   m_ObjectHideFlags: 0
@@ -2881,8 +2872,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &2302823387271292605
 GameObject:
   m_ObjectHideFlags: 0
@@ -3003,8 +2993,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -8700641560057481563, guid: d3bcc7a705e73f44e9ee386a1af18c8b, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &2307685739262360727
 GameObject:
   m_ObjectHideFlags: 0
@@ -3125,8 +3114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &2425972153323607740
 GameObject:
   m_ObjectHideFlags: 0
@@ -3350,6 +3338,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06fdd19381b25498c728437790a825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square:
+  - {fileID: 9071208677784739977}
+  - {fileID: 5119690270274506655}
+  - {fileID: 1013014430583195419}
+  - {fileID: 5583849149985115357}
+  - {fileID: 8006926292520257283}
+  - {fileID: 2690650634589186664}
+  - {fileID: 4532893333049093197}
+  - {fileID: 6546870701698316899}
 --- !u!1 &2791764246807179686
 GameObject:
   m_ObjectHideFlags: 0
@@ -3470,8 +3467,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &2885480063033125199
 GameObject:
   m_ObjectHideFlags: 0
@@ -3592,8 +3588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3050905545104602787
 GameObject:
   m_ObjectHideFlags: 0
@@ -3714,8 +3709,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3051333084075339564
 GameObject:
   m_ObjectHideFlags: 0
@@ -3768,6 +3762,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06fdd19381b25498c728437790a825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square:
+  - {fileID: 707183335963180219}
+  - {fileID: 653979080108930651}
+  - {fileID: 5675135267773479766}
+  - {fileID: 9056227330059345051}
+  - {fileID: 5956764569765595050}
+  - {fileID: 3094728964176692658}
+  - {fileID: 5480751514495838455}
+  - {fileID: 2062950130297961040}
 --- !u!1 &3082276753140740650
 GameObject:
   m_ObjectHideFlags: 0
@@ -4059,8 +4062,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3154117227581834252
 GameObject:
   m_ObjectHideFlags: 0
@@ -4113,6 +4115,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06fdd19381b25498c728437790a825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square:
+  - {fileID: 7388498249198035851}
+  - {fileID: 7114746784505310917}
+  - {fileID: 5349098034526404553}
+  - {fileID: 3090972531232787712}
+  - {fileID: 3224380300125829352}
+  - {fileID: 623228692583795946}
+  - {fileID: 3005399488030742765}
+  - {fileID: 8196468460401658527}
 --- !u!1 &3231023557890121888
 GameObject:
   m_ObjectHideFlags: 0
@@ -4233,8 +4244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3258767249856057976
 GameObject:
   m_ObjectHideFlags: 0
@@ -4287,6 +4297,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06fdd19381b25498c728437790a825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square:
+  - {fileID: 8712295905339665731}
+  - {fileID: 3876363004234675567}
+  - {fileID: 2527579899481969537}
+  - {fileID: 8929789049546711373}
+  - {fileID: 7103314214551417498}
+  - {fileID: 6431586655740535696}
+  - {fileID: 3728432936583082837}
+  - {fileID: 4422771137328108391}
 --- !u!1 &3272829408147280671
 GameObject:
   m_ObjectHideFlags: 0
@@ -4510,6 +4529,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06fdd19381b25498c728437790a825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square:
+  - {fileID: 8870851469942831858}
+  - {fileID: 3931195653281060527}
+  - {fileID: 2387832840136657013}
+  - {fileID: 6835567140540899459}
+  - {fileID: 6036376319068256589}
+  - {fileID: 5778210799768660394}
+  - {fileID: 7597257754190628207}
+  - {fileID: 5934711088425698003}
 --- !u!1 &3324289339805985238
 GameObject:
   m_ObjectHideFlags: 0
@@ -4630,8 +4658,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3335946774317540633
 GameObject:
   m_ObjectHideFlags: 0
@@ -4923,8 +4950,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3452573396674035039
 GameObject:
   m_ObjectHideFlags: 0
@@ -5045,8 +5071,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3484817288427688487
 GameObject:
   m_ObjectHideFlags: 0
@@ -5167,8 +5192,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3486263678622158729
 GameObject:
   m_ObjectHideFlags: 0
@@ -5289,8 +5313,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &3896578707756155326
 GameObject:
   m_ObjectHideFlags: 0
@@ -5411,8 +5434,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &4174309051859316649
 GameObject:
   m_ObjectHideFlags: 0
@@ -5533,8 +5555,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &4241760480881097692
 GameObject:
   m_ObjectHideFlags: 0
@@ -5655,8 +5676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &4346727125975467753
 GameObject:
   m_ObjectHideFlags: 0
@@ -5777,8 +5797,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &4491660279910141669
 GameObject:
   m_ObjectHideFlags: 0
@@ -6070,8 +6089,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &4686081719074063788
 GameObject:
   m_ObjectHideFlags: 0
@@ -6192,8 +6210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &4860411787256465655
 GameObject:
   m_ObjectHideFlags: 0
@@ -6314,8 +6331,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &4925963471518063133
 GameObject:
   m_ObjectHideFlags: 0
@@ -6436,8 +6452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &5010021832613135182
 GameObject:
   m_ObjectHideFlags: 0
@@ -6729,8 +6744,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &5517284059092380593
 GameObject:
   m_ObjectHideFlags: 0
@@ -6851,8 +6865,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &5520581031521844261
 GameObject:
   m_ObjectHideFlags: 0
@@ -7012,8 +7025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6042600599218616822
 GameObject:
   m_ObjectHideFlags: 0
@@ -7134,8 +7146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6133781670507958470
 GameObject:
   m_ObjectHideFlags: 0
@@ -7256,8 +7267,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6145243126557198351
 GameObject:
   m_ObjectHideFlags: 0
@@ -7378,8 +7388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -385941159313903229, guid: 47e520fd7b6fa554e8fb5cde28a94343, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6256865901513520638
 GameObject:
   m_ObjectHideFlags: 0
@@ -7500,8 +7509,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -8700641560057481563, guid: d3bcc7a705e73f44e9ee386a1af18c8b, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6305171757290432595
 GameObject:
   m_ObjectHideFlags: 0
@@ -7622,8 +7630,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6466886372110322761
 GameObject:
   m_ObjectHideFlags: 0
@@ -7744,8 +7751,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 930493056711419380, guid: a38394676eec81547997015ed2d36733, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6624970751759289213
 GameObject:
   m_ObjectHideFlags: 0
@@ -7866,8 +7872,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6706221010949098168
 GameObject:
   m_ObjectHideFlags: 0
@@ -7988,8 +7993,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &6869357179703113116
 GameObject:
   m_ObjectHideFlags: 0
@@ -8110,8 +8114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &7098930204879597152
 GameObject:
   m_ObjectHideFlags: 0
@@ -8271,8 +8274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -7270738833036218963, guid: d82818be22a52b644b48dfae0269574e, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &7283343469814837981
 GameObject:
   m_ObjectHideFlags: 0
@@ -8325,6 +8327,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06fdd19381b25498c728437790a825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square:
+  - {fileID: 4730250644365665362}
+  - {fileID: 3341438078724055647}
+  - {fileID: 7520110497093630527}
+  - {fileID: 8631298770084949949}
+  - {fileID: 962522539548455107}
+  - {fileID: 8502104423427591795}
+  - {fileID: 6516273410952459138}
+  - {fileID: 6767874381977312875}
 --- !u!1 &7314760590721340015
 GameObject:
   m_ObjectHideFlags: 0
@@ -8484,8 +8495,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &7500752836066122735
 GameObject:
   m_ObjectHideFlags: 0
@@ -8948,8 +8958,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &7640430806091205198
 GameObject:
   m_ObjectHideFlags: 0
@@ -9241,8 +9250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &7906636868838210074
 GameObject:
   m_ObjectHideFlags: 0
@@ -9705,8 +9713,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: -4590707909018625467, guid: 65512c7ae2296f349b455ac6b48eeabc, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &8369168711018267797
 GameObject:
   m_ObjectHideFlags: 0
@@ -9827,8 +9834,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &8392112568382439235
 GameObject:
   m_ObjectHideFlags: 0
@@ -9949,8 +9955,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &8442382003259870630
 GameObject:
   m_ObjectHideFlags: 0
@@ -10242,8 +10247,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &8527784665126803433
 GameObject:
   m_ObjectHideFlags: 0
@@ -10296,6 +10300,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06fdd19381b25498c728437790a825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square:
+  - {fileID: 3612249849696668179}
+  - {fileID: 1155563137329190502}
+  - {fileID: 6419698841883773688}
+  - {fileID: 1186782491328139948}
+  - {fileID: 7727849726625141121}
+  - {fileID: 96284924168150080}
+  - {fileID: 8348324326738404764}
+  - {fileID: 3610324797001516981}
 --- !u!1 &8703587740204910229
 GameObject:
   m_ObjectHideFlags: 0
@@ -10416,8 +10429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 930493056711419380, guid: a38394676eec81547997015ed2d36733, type: 3}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &8756305703550848113
 GameObject:
   m_ObjectHideFlags: 0
@@ -10538,8 +10550,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &8774685889789911892
 GameObject:
   m_ObjectHideFlags: 0
@@ -10831,8 +10842,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &8982879350563029200
 GameObject:
   m_ObjectHideFlags: 0
@@ -10953,8 +10963,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1 &9035935008471742931
 GameObject:
   m_ObjectHideFlags: 0
@@ -11075,8 +11084,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultMat: {fileID: 0}
   highlightMat: {fileID: 2100000, guid: a45cac03fc4c8c0478fd4524e0b67d6a, type: 2}
-  defaultPiece: {fileID: 0}
-  piece: {fileID: 0}
+  currentPiece: {fileID: 0}
 --- !u!1001 &4864369970832376696
 PrefabInstance:
   m_ObjectHideFlags: 0

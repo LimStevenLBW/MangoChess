@@ -23,6 +23,6 @@ public class InputFEN : MonoBehaviour
     void Update()
     {
         //Note, do not use input.isFocused, that becomes false when Return is pressed before the if-statement can run
-        if (isFocused && Input.GetKeyDown(KeyCode.Return)) board.FENtoBitBoard(input.text);
+        if (isFocused && Input.GetKeyDown(KeyCode.Return)) board.FENtoChessBoard(input.text);
     }
 }

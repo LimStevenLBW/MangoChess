@@ -4,24 +4,11 @@ using UnityEngine;
 
 public class ChessBoardFile : MonoBehaviour
 {
-    public void CreatePiece(int row, char piece)
+    [SerializeField] List<Square> square;
+    public void CreatePiece(int row, char c)
     {
-        switch (piece)
-        {
-            case ('r'):
-                break;
-            case ('n'):
-                break;
-            case ('b'):
-                break;
-            case ('k'):
-                break;
-            case ('q'):
-                break;
-            case ('p'):
-                break;
-        }
-
+        Piece piece = PieceGenerator.Instance.GetPrefab(c);
+        if (piece != null) square[row].CreatePiece(piece);
     }
     // Start is called before the first frame update
     void Start()
