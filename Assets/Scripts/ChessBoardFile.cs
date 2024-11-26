@@ -10,6 +10,20 @@ public class ChessBoardFile : MonoBehaviour
         Piece piece = PieceGenerator.Instance.GetPrefab(c);
         if (piece != null) square[row].CreatePiece(piece);
     }
+
+    public char GetPieceCode(int row)
+    {
+        return square[row].GetCode();
+    }
+
+    public void ClearAllPieces()
+    {
+        foreach(Square s in square)
+        {
+            s.ClearPiece();
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {

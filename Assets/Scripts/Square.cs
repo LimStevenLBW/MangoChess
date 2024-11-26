@@ -30,11 +30,22 @@ public class Square : MonoBehaviour
         //Piece piece = Instantiate(defaultPiece, pos, Quaternion.identity);
     }
 
+
     public void CreatePiece(Piece piece)
     {
         Vector3 pos = transform.position;
-        pos.y += 4.2f;
-        currentPiece = Instantiate(piece, pos, Quaternion.identity);
+        pos.y += .2f;
+        currentPiece = Instantiate(piece, pos, piece.transform.rotation);
+    }
+
+    public char GetCode()
+    {
+        return currentPiece.GetCode();
+    }
+
+    public void ClearPiece()
+    {
+        if(currentPiece) Destroy(currentPiece.gameObject);
     }
 
     // Update is called once per frame

@@ -17,12 +17,30 @@ public class ChessBoard : MonoBehaviour
         //files[4] = e_File; files[5] = f_File; files[6] = g_File; files[7] = h_File;
     }
 
-    //Starting FEN
-    //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+    public void ResetStartingPosition()
+    {
+        //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        string startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+
+        ClearBoard();
+
+        FENtoChessBoard(startingFEN);
+    }
+
+    public void ClearBoard()
+    {
+        foreach (ChessBoardFile f in file)
+        {
+            f.ClearAllPieces();
+        }
+    }
+
 
     //rnbqkbnr/pppppppp/2/k
     public void FENtoChessBoard(string FEN)
     {
+        ClearBoard();
         char[] fenArr = FEN.ToCharArray();
         int i = 0;
         int skip = 0;
@@ -60,14 +78,64 @@ public class ChessBoard : MonoBehaviour
             }
         }
 
-        /*
-        for(int i=0; i < fenArr.Length; i++)
-        {
-            char c = fenArr[i];
+        PosToBitBoard();
+    }
 
-            if(char.IsNumber(c)
+    public void PosToBitBoard()
+    {
+        int i = 0;
+        for(int row = 7; row >= 0; row--)
+        {
+            for(int col = 0; col < 8; col++)
+            {
+                char c = file[col].GetPieceCode(row);
+
+                string b = "0000000000000000000000000000000000000000000000000000000000000000";
+                b = b.Substring(0, i) + c + b.Substring(i + 1, b.Length - 1);
+
+                switch (c)
+                {
+                    case ('r'):
+                        blk_Rooks += ulong.Parse(b);
+                        break;
+                    case ('n'):
+                        blk_Knights += ulong.Parse(b);
+                        break;
+                    case ('b'):
+                        blk_Bishops += ulong.Parse(b);
+                        break;
+                    case ('p'):
+                        blk_Pawns += ulong.Parse(b);
+                        break;
+                    case ('k'):
+                        blk_King += ulong.Parse(b);
+                        break;
+                    case ('q'):
+                        blk_Queens += ulong.Parse(b);
+                        break;
+
+                    case ('R'):
+                        wht_Rooks += ulong.Parse(b);
+                        break;
+                    case ('N'):
+                        wht_Knights += ulong.Parse(b);
+                        break;
+                    case ('B'):
+                        wht_Bishops += ulong.Parse(b);
+                        break;
+                    case ('P'):
+                        wht_Pawns += ulong.Parse(b);
+                        break;
+                    case ('K'):
+                        wht_King += ulong.Parse(b);
+                        break;
+                    case ('Q'):
+                        blk_Queens += ulong.Parse(b);
+                        break;
+                }
+                i++;
+            }
         }
-        */
     }
 
     //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
