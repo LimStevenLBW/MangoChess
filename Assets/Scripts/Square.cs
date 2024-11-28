@@ -40,6 +40,7 @@ public class Square : MonoBehaviour
 
     public char GetCode()
     {
+        if (currentPiece == null) return ' ';
         return currentPiece.GetCode();
     }
 
