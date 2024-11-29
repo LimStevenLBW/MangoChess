@@ -11,9 +11,10 @@ public class ChessBoard : MonoBehaviour
 
     static ulong A_FILE;
     static ulong H_FILE;
-    static ulong RANK_4;
-    static ulong RANK_5;
-    static ulong RANK_8;
+    static ulong RANK_1 = 72057594037927936L;
+    static ulong RANK_4 = 1095216660480L;
+    static ulong RANK_5 = 4278190080L;
+    static ulong RANK_8 = 255L;
     static ulong WHT_CANT_CAPTURE;
     static ulong BLK_PIECES;
     static ulong EMPTY_SQUARES;
