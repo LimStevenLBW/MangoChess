@@ -16,6 +16,12 @@ public class ChessBoardFile : MonoBehaviour
         return square[row].GetCode();
     }
 
+    public void Highlight(int row)
+    {
+        square[row].Highlight();
+    }
+
+
     public void ClearAllPieces()
     {
         foreach(Square s in square)
@@ -23,7 +29,8 @@ public class ChessBoardFile : MonoBehaviour
             s.ClearPiece();
         }
     }
-
+    
+   
     // Start is called before the first frame update
     void Start()
     {

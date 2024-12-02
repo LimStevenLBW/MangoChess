@@ -15,16 +15,40 @@ public class ChessBoard : MonoBehaviour
     static ulong H_FILE = 72340172838076673; //Verified
 
     //Ranks
+    static ulong[] RANK_MASKS = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000,
+        0xFF00000000, 0xFF0000000000, 0xFF000000000000, 0xFF00000000000000 }; //Hexadecimal form ranks 1-8
+
+                                // H                G                   F                   E
+    static ulong[] FILE_MASKS = { 0x101010101010101, 0x202020202020202, 0x404040404040404, 0x808080808080808,
+        0x1010101010101010, 0x2020202020202020, 0x3030303030303030, 0x4040404040404040}; ////Hexadecimal Files are reversed, H-> A
+
+    // From top-right towards bottom left // Starting from SE corner
+    static ulong[] DIAGONALS = { 0x1, 0x102, 0x10204, 0x1020408, 0x102040810, 0x10204081020, 0x1020408102040,
+         0x102040810204080, 0x204081020408000, 0x408102040800000, 0x810204080000000,
+         0x1020408000000000, 0x2040800000000000, 408000000000000000, 0x8000000000000000 };
+
+    //Top left to bottom right \\ Starting from SW Corner
+    static ulong[] ANTI_DIAGONALS = { 0x80, 0x8040, 0x80402010, 0x8040201008, 0x804020100804, 0x80402010080402,
+        0x8040201008040201, 0x4020100804020100, 0x2010080402010000, 0x1008040201000000,
+        0x804020100000000,  0x402010000000000,  0x408000000000000,  0x100000000000000 };
+
     static ulong RANK_8 = 18374686479671623680; //Verified
     static ulong RANK_5 = 1095216660480; //Verified
     static ulong RANK_4 = 4278190080; //Verified
     static ulong RANK_1 = 255; //Verified
 
+    //Unset
     static ulong WHT_CANT_CAPTURE;
     static ulong WHT_PIECES;
     static ulong BLK_PIECES;
     static ulong EMPTY_SQUARES;
     static ulong ALL_PIECES;
+    static ulong OCCUPIED;
+
+    //Valuable Areas
+    static ulong CENTER = 103481868288; //Verified
+    static ulong EXTENDED_CENTER = 66229406269440; //Verified
+
     [SerializeField] private List<ChessBoardFile> file = new List<ChessBoardFile>();
 
     // Start is called before the first frame update
@@ -59,9 +83,9 @@ public class ChessBoard : MonoBehaviour
     {
         BLK_PIECES = blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens;
         WHT_PIECES = wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens;
-        ALL_PIECES = BLK_PIECES | WHT_PIECES;
-        Debug.Log("ulong All Pieces: " + ALL_PIECES);
-        //Debug.Log(Convert.ToString(ALL_PIECES, 2);
+        OCCUPIED = BLK_PIECES | WHT_PIECES;
+        Debug.Log("ulong All Pieces: " + OCCUPIED);
+        //Debug.Log(Convert.ToString(OCCUPIED, 2);
     }
 
 
@@ -105,6 +129,8 @@ public class ChessBoard : MonoBehaviour
 
         PosToBitBoard();
 
+        string history = "";
+        GetPossibleMovesWhite(history, wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens, blk_King, blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_Queens);
     }
 
     public void PosToBitBoard()
@@ -206,20 +232,22 @@ public class ChessBoard : MonoBehaviour
     }
 
 
-    public static string GetPossibleMovesWhite(string history, ulong wht_Pawns, ulong wht_Knights, ulong wht_Bishops, ulong wht_Rooks, ulong wht_King, ulong wht_Queens, ulong blk_King, ulong blk_Pawns, ulong blk_Knights, ulong blk_Bishops, ulong blk_Rooks, ulong blk_Queens)
+    public string GetPossibleMovesWhite(string history, ulong wht_Pawns, ulong wht_Knights, ulong wht_Bishops, ulong wht_Rooks, ulong wht_King, ulong wht_Queens, ulong blk_King, ulong blk_Pawns, ulong blk_Knights, ulong blk_Bishops, ulong blk_Rooks, ulong blk_Queens)
     {
         WHT_CANT_CAPTURE = ~(wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens | blk_King);
         BLK_PIECES = blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens;
         WHT_PIECES = wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens;
         EMPTY_SQUARES = ~(blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens | wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens);
 
+        OCCUPIED = BLK_PIECES | WHT_PIECES;
+
         string moveList = "";
 
-
+        DrawMoves(GetHorizontalVerticalMoves(9));
         return moveList;
     }
 
-    public static String GetWhitePawnMoves(string history, ulong wht_Pawns)
+    public static string GetWhitePawnMoves(string history, ulong wht_Pawns)
     {
         string moveList = "";
         //All pieces that a pawn can capture to the right if that piece is not on Rank8(promotion) or A File(can't right capture)
@@ -303,7 +331,54 @@ public class ChessBoard : MonoBehaviour
         return moveList;
     }
 
+    public static ulong ReverseBits(ulong x)
+    {
+        string num = "" + x;
+        char[] cNum = num.ToCharArray();
+        Array.Reverse(cNum);
+        num = new string(cNum);
+        Debug.Log(OCCUPIED);
+        return Convert.ToUInt64(num);
+    }
 
+    public static ulong GetHorizontalVerticalMoves(int pos)
+    {
+        ulong binaryS = (ulong) 1 << pos;
+        ulong horizontalMoves = (OCCUPIED - 2 * binaryS) ^ ReverseBits(ReverseBits(OCCUPIED) - 2 * ReverseBits(binaryS));
+        ulong verticalMoves = ((OCCUPIED & FILE_MASKS[pos % 8]) - (2 * binaryS)) & ReverseBits(ReverseBits(OCCUPIED & FILE_MASKS[pos % 8]) - (2 * ReverseBits(binaryS)));
+        return (horizontalMoves & RANK_MASKS[pos] | verticalMoves & RANK_MASKS[pos]);
+    }
+
+    public static ulong GetDiagonalMoves(int pos)
+    {
+        ulong binaryS = (ulong)1 << pos;
+        ulong diagonalMoves = ((OCCUPIED & DIAGONALS[pos / 8 + pos % 8]) - (2 * binaryS) ^ ReverseBits(ReverseBits(OCCUPIED & DIAGONALS[(pos / 8) + (pos % 8)])) - (2 * ReverseBits(binaryS)));
+        ulong antiDiagonalMoves = ((OCCUPIED & ANTI_DIAGONALS[(pos / 8) + 7 - (pos % 8)]) - (2 * ReverseBits(binaryS)) ^ ReverseBits(OCCUPIED & ANTI_DIAGONALS[(pos / 8) + 7 - (pos % 8)]) - (2 * ReverseBits(binaryS)));
+        return (diagonalMoves & DIAGONALS[(pos / 8) + (pos % 8)] | antiDiagonalMoves & ANTI_DIAGONALS[(pos / 8) + 7 - (pos % 8)]);
+    }
+
+    public void DrawMoves(ulong moves)
+    {
+        int i = 0;
+        string num = "" + moves;
+        char[] cNum = num.ToCharArray();
+
+        for (int row = 7; row >= 0; row--)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+
+                int c = (int)cNum[i];
+                i++;
+
+                if (c == 1)
+                {
+                    file[col].Highlight(row);
+                }
+
+            }
+        }
+    }
 
     // Update is called once per frame
     void Update()

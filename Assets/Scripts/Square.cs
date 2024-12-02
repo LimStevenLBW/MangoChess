@@ -6,8 +6,8 @@ public class Square : MonoBehaviour
 {
     [SerializeField] private Material defaultMat;
     [SerializeField] private Material highlightMat;
-   //[SerializeField] private Piece defaultPiece;
     [SerializeField] private Piece currentPiece;
+    private MeshRenderer mesh;
 
     void OnMouseOver()
     {
@@ -24,7 +24,8 @@ public class Square : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //if (defaultPiece == null) return;
+        mesh = GetComponent<MeshRenderer>();
+        if (defaultMat == null) defaultMat = mesh.material;
        
 
         //Piece piece = Instantiate(defaultPiece, pos, Quaternion.identity);
@@ -36,6 +37,11 @@ public class Square : MonoBehaviour
         Vector3 pos = transform.position;
         pos.y += .2f;
         currentPiece = Instantiate(piece, pos, piece.transform.rotation);
+    }
+
+    public void Highlight()
+    {
+        mesh.material = highlightMat;
     }
 
     public char GetCode()
