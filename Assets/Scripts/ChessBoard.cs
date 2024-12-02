@@ -42,7 +42,6 @@ public class ChessBoard : MonoBehaviour
     static ulong WHT_PIECES;
     static ulong BLK_PIECES;
     static ulong EMPTY_SQUARES;
-    static ulong ALL_PIECES;
     static ulong OCCUPIED;
 
     //Valuable Areas
@@ -85,7 +84,9 @@ public class ChessBoard : MonoBehaviour
         WHT_PIECES = wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens;
         OCCUPIED = BLK_PIECES | WHT_PIECES;
         Debug.Log("ulong All Pieces: " + OCCUPIED);
-        //Debug.Log(Convert.ToString(OCCUPIED, 2);
+
+        Debug.Log(DecimalToBitboard(OCCUPIED));
+        
     }
 
 
@@ -129,8 +130,8 @@ public class ChessBoard : MonoBehaviour
 
         PosToBitBoard();
 
-        string history = "";
-        GetPossibleMovesWhite(history, wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens, blk_King, blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_Queens);
+        //string history = "";
+        //GetPossibleMovesWhite(history, wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens, blk_King, blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_Queens);
     }
 
     public void PosToBitBoard()
@@ -143,8 +144,8 @@ public class ChessBoard : MonoBehaviour
                 char c = file[col].GetPieceCode(row);
 
                 string b = "0000000000000000000000000000000000000000000000000000000000000000";
-                b = b.Substring(0, i) + '1' + b.Substring(i + 1);
-
+                //b = b.Substring(0, i) + '1' + b.Substring(i + 1);
+                b = b.Substring(i) + '1' + b.Substring(0, i);
                 switch (c)
                 {
                     case ('r'):
@@ -243,7 +244,7 @@ public class ChessBoard : MonoBehaviour
 
         string moveList = "";
 
-        DrawMoves(GetHorizontalVerticalMoves(9));
+        //DrawMoves(GetHorizontalVerticalMoves(9));
         return moveList;
     }
 
@@ -337,7 +338,6 @@ public class ChessBoard : MonoBehaviour
         char[] cNum = num.ToCharArray();
         Array.Reverse(cNum);
         num = new string(cNum);
-        Debug.Log(OCCUPIED);
         return Convert.ToUInt64(num);
     }
 
@@ -357,20 +357,35 @@ public class ChessBoard : MonoBehaviour
         return (diagonalMoves & DIAGONALS[(pos / 8) + (pos % 8)] | antiDiagonalMoves & ANTI_DIAGONALS[(pos / 8) + 7 - (pos % 8)]);
     }
 
-    public void DrawMoves(ulong moves)
+    public String DecimalToBitboard(ulong num)
     {
-        int i = 0;
-        string num = "" + moves;
-        char[] cNum = num.ToCharArray();
+        string bitboard = Convert.ToString((long)num, 2); //Casting a ulong to long doesn't change the bit pattern at all.
+        //Debug.Log(bitboard); 
+
+        int l = 64 - bitboard.Length;
+
+        string allPieces = "";
+        for (int i = 0; i < l; i++)
+        {
+            allPieces += '0';
+        }
+        allPieces += bitboard;
+        return allPieces;
+    }
+
+    public void DrawBitboard(string bitboard)
+    {
+        //string bitboard = DecimalToBitboard(num);
+        int i = 63;
+        char[] cNum = bitboard.ToCharArray();
 
         for (int row = 7; row >= 0; row--)
         {
             for (int col = 0; col < 8; col++)
             {
 
-                int c = (int)cNum[i];
-                i++;
-
+                int c = cNum[i] - '0';
+                i--;
                 if (c == 1)
                 {
                     file[col].Highlight(row);
@@ -378,6 +393,7 @@ public class ChessBoard : MonoBehaviour
 
             }
         }
+
     }
 
     // Update is called once per frame
