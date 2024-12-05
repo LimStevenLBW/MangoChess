@@ -10,9 +10,9 @@ public class ChessBoard : MonoBehaviour
     ulong wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens;
 
     //Edge Files
-    static ulong A_FILE = 9259542123273814144;  //Verified
+    static ulong A_FILE = 9259542123273814144;  
     //static ulong AB_FILE = 
-    static ulong H_FILE = 72340172838076673; //Verified
+    static ulong H_FILE = 72340172838076673; 
 
     //Ranks
     static ulong[] RANK_MASKS = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000,
@@ -32,10 +32,10 @@ public class ChessBoard : MonoBehaviour
         0x8040201008040201, 0x4020100804020100, 0x2010080402010000, 0x1008040201000000,
         0x804020100000000,  0x402010000000000,  0x408000000000000,  0x100000000000000 };
 
-    static ulong RANK_8 = 18374686479671623680; //Verified
-    static ulong RANK_5 = 1095216660480; //Verified
-    static ulong RANK_4 = 4278190080; //Verified
-    static ulong RANK_1 = 255; //Verified
+    static ulong RANK_8 = 255; //Verified
+    static ulong RANK_5 = 4278190080; //Verified
+    static ulong RANK_4 = 1095216660480; //Verified
+    static ulong RANK_1 = 18374686479671623680; //Verified
 
     //Unset
     static ulong WHT_CANT_CAPTURE;
@@ -45,8 +45,8 @@ public class ChessBoard : MonoBehaviour
     static ulong OCCUPIED;
 
     //Valuable Areas
-    static ulong CENTER = 103481868288; //Verified
-    static ulong EXTENDED_CENTER = 66229406269440; //Verified
+    static ulong CENTER = 103481868288; 
+    static ulong EXTENDED_CENTER = 66229406269440; 
 
     [SerializeField] private List<ChessBoardFile> file = new List<ChessBoardFile>();
 
@@ -131,7 +131,7 @@ public class ChessBoard : MonoBehaviour
         PosToBitBoard();
 
         //string history = "";
-        //GetPossibleMovesWhite(history, wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens, blk_King, blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_Queens);
+       
     }
 
     public void PosToBitBoard()
@@ -193,7 +193,9 @@ public class ChessBoard : MonoBehaviour
         }
 
         GetAllPieces();
-
+        string history = "";
+        string moves = GetPossibleMovesWhite(history, wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens, blk_King, blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_Queens);
+        Debug.Log(moves);
     }
 
     //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -242,13 +244,13 @@ public class ChessBoard : MonoBehaviour
 
         OCCUPIED = BLK_PIECES | WHT_PIECES;
 
-        string moveList = "";
+        string moveList = GetWhitePawnMoves(history, wht_Pawns);
 
         //DrawMoves(GetHorizontalVerticalMoves(9));
         return moveList;
     }
 
-    public static string GetWhitePawnMoves(string history, ulong wht_Pawns)
+    public string GetWhitePawnMoves(string history, ulong wht_Pawns)
     {
         string moveList = "";
         //All pieces that a pawn can capture to the right if that piece is not on Rank8(promotion) or A File(can't right capture)
@@ -266,20 +268,28 @@ public class ChessBoard : MonoBehaviour
                 moveList += "" + (i / 8 + 1) + (i % 8 + 1) + (i / 8) + (i % 8);
         }
 
-        PAWN_MOVES = (wht_Pawns >> 8) & EMPTY_SQUARES & ~RANK_8; //Forward Move, if square is empty
+        PAWN_MOVES = (wht_Pawns >> 8) & EMPTY_SQUARES & ~RANK_8; //Forward Moves, if square is empty
+
+        DrawBitboard(PAWN_MOVES);
         for (int i = 0; i < 64; i++)
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
-                moveList += "" + (i / 8 + 1) + (i % 8) + (i / 8) + (i % 8);
+            {
+                Debug.Log("detected" + i);
+                //Debug.Log("P" + i);
+                //moveList += " / " + (i / 8 + 1) + (i % 8) + (i / 8) + (i % 8);
+            }
+               
         }
 
+        /*
         PAWN_MOVES = (wht_Pawns >> 8) & EMPTY_SQUARES & EMPTY_SQUARES >> 8 & RANK_4; //Double Move Forward
         for (int i = 0; i < 64; i++)
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
                 moveList += "" + (i / 8 + 2) + (i % 8) + (i / 8) + (i % 8);
         }
-
+       
         //Promotion
         PAWN_MOVES = (wht_Pawns >> 7) & BLK_PIECES & RANK_8 & ~A_FILE; //Promote by right capture
         for (int i = 0; i < 64; i++)
@@ -304,7 +314,7 @@ public class ChessBoard : MonoBehaviour
                 moveList += "" + (i % 8) + (i % 8) + "QP" + (i % 8) + (i % 8) + "RP" + (i % 8) + (i % 8) + "BP" + (i % 8) + (i % 8) + "KP";
 
         }
-
+         */
         //Checking for en passant, need to know prior moves
         if (history.Length >= 4)
         {
@@ -357,7 +367,7 @@ public class ChessBoard : MonoBehaviour
         return (diagonalMoves & DIAGONALS[(pos / 8) + (pos % 8)] | antiDiagonalMoves & ANTI_DIAGONALS[(pos / 8) + 7 - (pos % 8)]);
     }
 
-    public String DecimalToBitboard(ulong num)
+    public string DecimalToBitboard(ulong num)
     {
         string bitboard = Convert.ToString((long)num, 2); //Casting a ulong to long doesn't change the bit pattern at all.
         //Debug.Log(bitboard); 
@@ -370,7 +380,14 @@ public class ChessBoard : MonoBehaviour
             allPieces += '0';
         }
         allPieces += bitboard;
+
         return allPieces;
+    }
+
+    public void DrawBitboard(ulong num)
+    {
+        string res = DecimalToBitboard(num);
+        DrawBitboard(res);
     }
 
     public void DrawBitboard(string bitboard)
@@ -394,6 +411,11 @@ public class ChessBoard : MonoBehaviour
             }
         }
 
+    }
+
+    public List<ChessBoardFile> GetFiles()
+    {
+        return file;
     }
 
     // Update is called once per frame

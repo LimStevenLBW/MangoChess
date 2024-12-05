@@ -9,19 +9,45 @@ public class Square : MonoBehaviour
     [SerializeField] private Piece currentPiece;
     private MeshRenderer mesh;
 
+    //Pieces are ignored because they are on the ignoreraycast layer
     void OnMouseOver()
     {
         //If your mouse hovers over the GameObject with the script attached, output this message
-        //Debug.Log("Mouse is over GameObject.");
+        if (currentPiece != null && currentPiece.GetSideColor() == Game.Instance.GetPlayerSide())
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Game.Instance.Select(currentPiece);
+            }
+            else
+            {
+                Game.Instance.Hover(currentPiece);
+            }
+        }
+        else if(currentPiece == null)
+        {
+            //Try to move a piece
+        } 
     }
 
     void OnMouseExit()
-    {
+    { 
         //The mouse is no longer hovering over the GameObject so output this message each frame
         //Debug.Log("Mouse is no longer on GameObject.");
-    }
 
-    // Start is called before the first frame update
+        // Start is called before the first frame update
+        if (currentPiece != null && currentPiece.GetSideColor() == Game.Instance.GetPlayerSide()) { 
+            if (Input.GetMouseButtonDown(0))
+            {
+                //Game.Instance.Select(currentPiece);
+            }
+            else
+            {
+                Game.Instance.Unhover(currentPiece);
+            }
+        }
+    }
+   
     void Start()
     {
         mesh = GetComponent<MeshRenderer>();
@@ -48,6 +74,11 @@ public class Square : MonoBehaviour
     {
         if (currentPiece == null) return ' ';
         return currentPiece.GetCode();
+    }
+
+    public Piece GetCurrentPiece()
+    {
+        return currentPiece;
     }
 
     public void ClearPiece()

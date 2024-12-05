@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4218562738791759222}
   - component: {fileID: 930493056711419380}
   - component: {fileID: 2632559329287667137}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RookWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

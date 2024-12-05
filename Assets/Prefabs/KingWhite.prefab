@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -4942607688676702979}
   - component: {fileID: -385941159313903229}
   - component: {fileID: 4946278541829736899}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: KingWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

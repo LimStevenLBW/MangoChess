@@ -21,6 +21,11 @@ public class ChessBoardFile : MonoBehaviour
         square[row].Highlight();
     }
 
+    public void ClearPieceSelection(int row)
+    {
+        Piece piece = square[row].GetCurrentPiece();
+        if (piece != null) piece.DisableOutline();
+    }
 
     public void ClearAllPieces()
     {
