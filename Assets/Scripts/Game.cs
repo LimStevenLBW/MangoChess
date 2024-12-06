@@ -71,9 +71,11 @@ public class Game : MonoBehaviour
         {
             piece.EnableOutline();
             selectedPiece = piece;
+            //Show the piece's available moves
+            board.ShowMovementOptions(piece);
+
         }
-        
-        //Show the piece's available moves
+
 
         /*
         if (Input.GetMouseButtonDown(0) && Game.Instance.GetSelectedPiece() != currentPiece)

@@ -7,7 +7,19 @@ public class Square : MonoBehaviour
     [SerializeField] private Material defaultMat;
     [SerializeField] private Material highlightMat;
     [SerializeField] private Piece currentPiece;
+
+    private int idNumber = -1;
     private MeshRenderer mesh;
+
+    public void SetID(int id)
+    {
+        idNumber = id;
+    }
+
+    public int GetID()
+    {
+        return idNumber;
+    }
 
     //Pieces are ignored because they are on the ignoreraycast layer
     void OnMouseOver()
@@ -36,15 +48,8 @@ public class Square : MonoBehaviour
         //Debug.Log("Mouse is no longer on GameObject.");
 
         // Start is called before the first frame update
-        if (currentPiece != null && currentPiece.GetSideColor() == Game.Instance.GetPlayerSide()) { 
-            if (Input.GetMouseButtonDown(0))
-            {
-                //Game.Instance.Select(currentPiece);
-            }
-            else
-            {
-                Game.Instance.Unhover(currentPiece);
-            }
+        if (currentPiece != null && currentPiece.GetSideColor() == Game.Instance.GetPlayerSide()) {
+            Game.Instance.Unhover(currentPiece);
         }
     }
    
@@ -58,11 +63,20 @@ public class Square : MonoBehaviour
     }
 
 
-    public void CreatePiece(Piece piece)
+    public void CreatePiece(char c)
     {
+        Piece piece = PieceGenerator.Instance.GetPrefab(c);
+
+        if (piece == null)
+        {
+            Debug.Log("Create Piece function could not run due to null id");
+            return;
+        }
+
         Vector3 pos = transform.position;
         pos.y += .2f;
         currentPiece = Instantiate(piece, pos, piece.transform.rotation);
+        currentPiece.SetSquare(this);
     }
 
     public void Highlight()

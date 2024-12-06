@@ -7,6 +7,8 @@ public class Piece : MonoBehaviour
     [SerializeField] char pieceCode;
     protected Outline outline;
     private Game.Side sideColor;
+
+    private Square currentSquare;
     
 
     // Start is called before the first frame update
@@ -25,6 +27,16 @@ public class Piece : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void SetSquare(Square square)
+    {
+        currentSquare = square;
+    }
+
+    public Square GetSquare()
+    {
+        return currentSquare;
     }
 
     public char GetCode()

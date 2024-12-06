@@ -5,10 +5,10 @@ using UnityEngine;
 public class ChessBoardFile : MonoBehaviour
 {
     [SerializeField] List<Square> square;
-    public void CreatePiece(int row, char c)
+
+    public Square GetSquare(int row)
     {
-        Piece piece = PieceGenerator.Instance.GetPrefab(c);
-        if (piece != null) square[row].CreatePiece(piece);
+        return square[row];
     }
 
     public char GetPieceCode(int row)
