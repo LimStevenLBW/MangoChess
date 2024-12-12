@@ -18,13 +18,18 @@ public class ChessBoardFile : MonoBehaviour
 
     public void Highlight(int row)
     {
-        square[row].Highlight();
+        square[row].HighlightSquare();
     }
 
     public void ClearPieceSelection(int row)
     {
         Piece piece = square[row].GetCurrentPiece();
         if (piece != null) piece.DisableOutline();
+    }
+
+    public void ClearHighlightedSquare(int row)
+    {
+        square[row].ClearHighlight();
     }
 
     public void ClearAllPieces()

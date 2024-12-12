@@ -480,7 +480,6 @@ public class ChessBoard : MonoBehaviour
 
             }
         }
-
     }
 
     public List<ChessBoardFile> GetFiles()

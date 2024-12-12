@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    public GameObject Canvas;
     public ChessBoard board;
+    public GameUI gameUI;
+    public Side SideToMove = Side.White;
 
     public enum Side
     {
@@ -16,7 +17,6 @@ public class Game : MonoBehaviour
     private Side playerSide = Side.Undecided;
 
     private Piece selectedPiece;
-    private Piece highlightedPiece;
 
     private static Game instance;
     public static Game Instance { get { return instance; } }
@@ -47,25 +47,33 @@ public class Game : MonoBehaviour
 
     public void StartGameAsWhite()
     {
+        gameUI.HideMenu();
         playerSide = Side.White;
-        Canvas.SetActive(false);
+        gameUI.ShowPlayerToMoveLabel(playerSide);
     }
 
     public void StartGameAsBlack()
     {
+        gameUI.HideMenu();
         playerSide = Side.Black;
-        Canvas.SetActive(false);
+        gameUI.ShowPlayerToMoveLabel(playerSide);
     }
 
-    public void Select(Piece piece)
+    public void ClearAllSelections()
     {
         for (int row = 7; row >= 0; row--)
         {
             for (int col = 0; col < 8; col++)
             {
                 board.GetFiles()[col].ClearPieceSelection(row);
+                board.GetFiles()[col].ClearHighlightedSquare(row);
             }
         }
+    }
+
+    public void Select(Piece piece)
+    {
+        ClearAllSelections();
 
         if(piece != null)
         {
@@ -103,6 +111,27 @@ public class Game : MonoBehaviour
     public Piece GetSelectedPiece()
     {
         return selectedPiece;
+    }
+
+    public void MakePlayerMove(Square destination)
+    {
+        if (SideToMove == Side.White) SideToMove = Side.Black;
+        else if (SideToMove == Side.Black) SideToMove = Side.White;
+        gameUI.ShowPlayerToMoveLabel(SideToMove);
+
+        ClearAllSelections();
+        Square formerSquare = selectedPiece.GetSquare();
+        formerSquare.ClearReference();
+
+        Piece capture = destination.GetCurrentPiece();
+        if(capture == null)
+        {
+            
+        }
+
+        destination.SetNewPiece(selectedPiece);
+        selectedPiece.DisableOutline();
+        selectedPiece = null;
     }
 
     // Start is called before the first frame update

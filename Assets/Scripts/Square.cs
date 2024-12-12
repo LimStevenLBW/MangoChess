@@ -10,7 +10,7 @@ public class Square : MonoBehaviour
 
     private int idNumber = -1;
     private MeshRenderer mesh;
-
+    private bool isMovementSquare = false;
     public void SetID(int id)
     {
         idNumber = id;
@@ -21,25 +21,26 @@ public class Square : MonoBehaviour
         return idNumber;
     }
 
-    //Pieces are ignored because they are on the ignoreraycast layer
+    //Pieces are ignored because they are on the ignore raycast layer
     void OnMouseOver()
-    {
-        //If your mouse hovers over the GameObject with the script attached, output this message
+    { 
+        //On player owned piece
         if (currentPiece != null && currentPiece.GetSideColor() == Game.Instance.GetPlayerSide())
-        {
+        { 
             if (Input.GetMouseButtonDown(0))
             {
                 Game.Instance.Select(currentPiece);
             }
             else
             {
+                //If your mouse hovers over the GameObject with the script attached, output this message
                 Game.Instance.Hover(currentPiece);
             }
         }
-        else if(currentPiece == null)
+        else if(isMovementSquare && Input.GetMouseButtonDown(0))//On a highlighted square
         {
-            //Try to move a piece
-        } 
+            Game.Instance.MakePlayerMove(this);
+        }
     }
 
     void OnMouseExit()
@@ -62,7 +63,7 @@ public class Square : MonoBehaviour
         //Piece piece = Instantiate(defaultPiece, pos, Quaternion.identity);
     }
 
-
+    //Generates a new piece based on the char code
     public void CreatePiece(char c)
     {
         Piece piece = PieceGenerator.Instance.GetPrefab(c);
@@ -79,9 +80,16 @@ public class Square : MonoBehaviour
         currentPiece.SetSquare(this);
     }
 
-    public void Highlight()
+    public void HighlightSquare()
     {
         mesh.material = highlightMat;
+        isMovementSquare = true;
+    }
+
+    public void ClearHighlight()
+    {
+        mesh.material = defaultMat;
+        isMovementSquare = false;
     }
 
     public char GetCode()
@@ -90,14 +98,41 @@ public class Square : MonoBehaviour
         return currentPiece.GetCode();
     }
 
+    //Move a new piece into this square
+    public void SetNewPiece(Piece piece)
+    {
+        Vector3 pos = transform.position;
+        pos.y += .05f;
+        if (currentPiece != null)
+        {
+            Destroy(currentPiece.gameObject);
+        }
+
+        currentPiece = piece;
+        currentPiece.SetSquare(this);
+        currentPiece.transform.position = pos;
+    }
+
+    //Getter
     public Piece GetCurrentPiece()
     {
         return currentPiece;
     }
 
+    //Clears the piece and destroys the gameobject
     public void ClearPiece()
     {
-        if(currentPiece) Destroy(currentPiece.gameObject);
+        if (currentPiece)
+        {
+            currentPiece = null;
+            Destroy(currentPiece.gameObject);
+        }
+    }
+
+    //Only removes the reference
+    public void ClearReference()
+    {
+        if (currentPiece) currentPiece = null;
     }
 
     // Update is called once per frame
