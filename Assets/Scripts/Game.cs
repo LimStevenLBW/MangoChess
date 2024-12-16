@@ -7,6 +7,7 @@ public class Game : MonoBehaviour
     public ChessBoard board;
     public GameUI gameUI;
     public Side SideToMove = Side.White;
+    public bool DEBUG_MODE;
 
     public enum Side
     {

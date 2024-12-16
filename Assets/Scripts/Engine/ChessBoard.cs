@@ -5,14 +5,50 @@ using UnityEngine;
 
 public class ChessBoard : MonoBehaviour
 {
+    public string initialFEN = "";
+
+    public struct Move
+    {
+        public Move(int s, int e, bool side, char piece, bool isCapture, bool passantCapture, bool isPromotion, char promotionPiece = ' ')
+        {
+            start = s;
+            end = e;
+            this.side = side;
+            this.piece = piece;
+            this.isCapture = isCapture;
+            this.passantCapture = passantCapture;
+            this.isPromotion = isPromotion;
+            this.promotionPiece = promotionPiece;
+        }
+
+        public override string ToString() => $"start{start}, end{end}; {char.ToUpper(piece)}" + (isCapture ? "x" : "");
+
+
+        int start;       //origin and destination squares (0 - 63)
+        int end;
+        bool side;           //side moving LIGHT=false or DARK=true
+
+        char piece;          //king=0, queens=2,rooks=4,bishops=6,pawns=8
+        bool isCapture;
+        bool passantCapture;   //is this move a capture using en passant
+
+        //char captured_piece; //king=0, queens=2,rooks=4,bishops=6,pawns=8        
+        // bool canCastle_off[4];
+        // bool isCastle[4];
+        //char enPassant;         //if the pawn is pushed two places, set en passant square, along with the square the pawn is on for capture
+
+        bool isPromotion;
+        char promotionPiece;
+    }
+
     //Bitboards
     ulong blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_King, blk_Queens;
     ulong wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens;
 
     //Edge Files
-    static ulong A_FILE = 9259542123273814144;  
+    static ulong A_FILE = 72340172838076673;  //Verified
     //static ulong AB_FILE = 
-    static ulong H_FILE = 72340172838076673; 
+    static ulong H_FILE = 9259542123273814144; //Verified
 
     //Ranks
     static ulong[] RANK_MASKS = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000,
@@ -32,10 +68,10 @@ public class ChessBoard : MonoBehaviour
         0x8040201008040201, 0x4020100804020100, 0x2010080402010000, 0x1008040201000000,
         0x804020100000000,  0x402010000000000,  0x408000000000000,  0x100000000000000 };
 
-    static ulong RANK_8 = 255; //Verified
-    static ulong RANK_5 = 1095216660480; //Verified
-    static ulong RANK_4 = 4278190080; //Verified
-    static ulong RANK_1 = 18374686479671623680; //Verified
+    static ulong RANK_1 = 255; 
+    static ulong RANK_5 = 1095216660480; 
+    static ulong RANK_4 = 4278190080; 
+    static ulong RANK_8 = 18374686479671623680; 
 
     //Unset
     static ulong WHT_CANT_CAPTURE;
@@ -46,7 +82,10 @@ public class ChessBoard : MonoBehaviour
 
     //Valuable Areas
     static ulong CENTER = 103481868288; 
-    static ulong EXTENDED_CENTER = 66229406269440; 
+    static ulong EXTENDED_CENTER = 66229406269440;
+
+    //Stores the moves a selected piece can make
+    ulong AVAILABLE_MOVES;
 
     [SerializeField] private List<ChessBoardFile> file = new List<ChessBoardFile>();
 
@@ -67,16 +106,19 @@ public class ChessBoard : MonoBehaviour
             //files[4] = e_File; files[5] = f_File; files[6] = g_File; files[7] = h_File;
         }
 
+        ResetStartingPosition();
+
     }
 
     public void ResetStartingPosition()
     {
+        string defaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        if (initialFEN != "") defaultFEN = initialFEN;
         //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        string startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-
+        
         ClearBoard();
 
-        FENtoChessBoard(startingFEN);
+        FENtoChessBoard(defaultFEN);
     }
 
     public void ClearBoard()
@@ -87,8 +129,15 @@ public class ChessBoard : MonoBehaviour
         }
     }
 
+    /*
+     * On piece selection, reveal where this piece can move
+     */
     public void ShowMovementOptions(Piece piece)
     {
+        List<Move> moveList = new List<Move>();
+        string b = "0000000000000000000000000000000000000000000000000000000000000000";
+        int i = piece.GetSquare().GetID();
+        b = b.Substring(i) + '1' + b.Substring(0, i);
         Char code = piece.GetCode();
 
         switch (code)
@@ -103,7 +152,7 @@ public class ChessBoard : MonoBehaviour
                 //blk_Bishops += Convert.ToUInt64(b, 2);
                 break;
             case ('p'):
-                //blk_Pawns += Convert.ToUInt64(b, 2);
+                moveList = GetBlackPawnMoves("", Convert.ToUInt64(b, 2));
                 break;
             case ('k'):
                 //blk_King += Convert.ToUInt64(b, 2);
@@ -122,34 +171,40 @@ public class ChessBoard : MonoBehaviour
                // wht_Bishops += Convert.ToUInt64(b, 2);
                 break;
             case ('P'):
-                string b = "0000000000000000000000000000000000000000000000000000000000000000";
-                int i = piece.GetSquare().GetID();
-                Debug.Log("id" + i);
-                b = b.Substring(i) + '1' + b.Substring(0, i);
-
-                Debug.Log("bit : " + b);
-                GetWhitePawnMoves("", Convert.ToUInt64(b, 2));
+                moveList = GetWhitePawnMoves("", Convert.ToUInt64(b, 2));
                 break;
             case ('K'):
                // wht_King += Convert.ToUInt64(b, 2);
                 break;
             case ('Q'):
-              //  blk_Queens += Convert.ToUInt64(b, 2);
+                moveList = GetQueenMoves("", Convert.ToUInt64(b, 2), i);
                 break;
             default:
                 break;
         }
+
+        foreach (Move m in moveList)
+        {
+            Debug.Log(m);
+        }
+
+        DrawBitboard(AVAILABLE_MOVES); //Show available moves
+        AVAILABLE_MOVES = 0; //Reset available moves
+        PosToBitBoard();
     }
 
     //Retrieve the bitboard value for all pieces
-    public void GetAllPieces()
+    public void UpdateBitBoards()
     {
+        WHT_CANT_CAPTURE = ~(wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens | blk_King);
         BLK_PIECES = blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens;
         WHT_PIECES = wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens;
-        OCCUPIED = BLK_PIECES | WHT_PIECES;
-        Debug.Log("ulong All Pieces: " + OCCUPIED);
+        EMPTY_SQUARES = ~(blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens | wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens);
 
-        Debug.Log(DecimalToBitboard(OCCUPIED));
+        OCCUPIED = BLK_PIECES | WHT_PIECES;
+        //Debug.Log("ulong All Pieces: " + OCCUPIED);
+
+        //Debug.Log(DecimalToBitboard(OCCUPIED));
         
     }
 
@@ -198,11 +253,14 @@ public class ChessBoard : MonoBehaviour
         //string history = "";
        
     }
-
+     
     public void PosToBitBoard()
     {
+        blk_Pawns = blk_Knights = blk_Bishops = blk_Rooks = blk_King = blk_Queens = 0;
+        wht_Pawns = wht_Knights = wht_Bishops = wht_Rooks = wht_King = wht_Queens = 0;
+
         int i = 0;
-        for(int row = 7; row >= 0; row--)
+        for(int row = 0; row < 8; row++)
         {
             for(int col = 0; col < 8; col++)
             {
@@ -257,17 +315,17 @@ public class ChessBoard : MonoBehaviour
             }
         }
 
-        GetAllPieces();
-        string history = "";
-        string moves = GetPossibleMovesWhite(history, wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens, blk_King, blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_Queens);
-        Debug.Log("All Possible Moves White: " + moves);
+        UpdateBitBoards();
+        //string history = "";
+        //string moves = GetPossibleMovesWhite(history, wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens, blk_King, blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_Queens);
+        //Debug.Log("All Possible Moves White: " + moves);
     }
 
     //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public void FENtoBitBoard(string FEN)
     {
-        bool isBoardFilled = false;
-        int row = 7;
+        //bool isBoardFilled = false;
+        //int row = 7;
 
         char[] fenArr = FEN.ToCharArray();
         int j = 0; //FEN pointer
@@ -300,14 +358,9 @@ public class ChessBoard : MonoBehaviour
     }
 
 
-    public string GetPossibleMovesWhite(string history, ulong wht_Pawns, ulong wht_Knights, ulong wht_Bishops, ulong wht_Rooks, ulong wht_King, ulong wht_Queens, ulong blk_King, ulong blk_Pawns, ulong blk_Knights, ulong blk_Bishops, ulong blk_Rooks, ulong blk_Queens)
-    {
-        WHT_CANT_CAPTURE = ~(wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens | blk_King);
-        BLK_PIECES = blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens;
-        WHT_PIECES = wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens;
-        EMPTY_SQUARES = ~(blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens | wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens);
-
-        OCCUPIED = BLK_PIECES | WHT_PIECES;
+    //string history, ulong wht_Pawns, ulong wht_Knights, ulong wht_Bishops, ulong wht_Rooks, ulong wht_King, ulong wht_Queens, ulong blk_King, ulong blk_Pawns, ulong blk_Knights, ulong blk_Bishops, ulong blk_Rooks, ulong blk_Queens
+    public string GetPossibleMovesWhite()
+    { 
         string moveList = "";
        // string moveList = GetWhitePawnMoves(history, wht_Pawns);
 
@@ -315,49 +368,80 @@ public class ChessBoard : MonoBehaviour
         return moveList;
     }
 
-    public string GetWhitePawnMoves(string history, ulong wht_Pawns)
+    /*
+     * WHITE PAWN, Enpassant and promotion incomplete
+     */
+    public List<Move> GetWhitePawnMoves(string history, ulong wht_Pawns)
     {
+        List<Move> moveList = new List<Move>();
 
-        string moveList = "";
+        //RIGHT CAPTURE
         //All pieces that a pawn can capture to the right if that piece is not on Rank8(promotion) or A File(can't right capture)
-        ulong PAWN_MOVES = (wht_Pawns >> 7) & BLK_PIECES & ~RANK_8 & ~A_FILE;
+        ulong PAWN_MOVES = (wht_Pawns << 9) & BLK_PIECES & ~RANK_8 & ~A_FILE;
+        AVAILABLE_MOVES += PAWN_MOVES;
         for (int i = 0; i < 64; i++) //Iterate through the bitboard
         {
-            if (((PAWN_MOVES >> i) & 1) == 1) //if the bit is active
-                moveList += "" + (i / 8 + 1) + (i % 8 - 1) + (i / 8) + (i % 8); //(x1,y1,x2,y2) Formula to store the right capture destination as a move
+            if (((PAWN_MOVES >> i) & 1) == 1)
+            {//if the bit is active
+                int start = (i - 9);
+                int end = (i);
+                Move m = new Move(start, end, false, 'p', true, false, false);
+                moveList.Add(m);
+                //moveList += "" + (i / 8 + 1) + (i % 8 - 1) + (i / 8) + (i % 8); //(x1,y1,x2,y2) Formula to store the right capture destination as a move
+            }
         }
 
-        PAWN_MOVES = (wht_Pawns >> 9) & BLK_PIECES & ~RANK_8 & ~H_FILE; //Left capture
+        //LEFT CAPTURE
+        PAWN_MOVES = (wht_Pawns << 7) & BLK_PIECES & ~RANK_8 & ~H_FILE; //Left capture
+        AVAILABLE_MOVES += PAWN_MOVES;
         for (int i = 0; i < 64; i++) //Iterate through the bitboard, possibly optimize using trailing zeros calculation instead
         {
-            if (((PAWN_MOVES >> i) & 1) == 1)
-                moveList += "" + (i / 8 + 1) + (i % 8 + 1) + (i / 8) + (i % 8);
+            if (((PAWN_MOVES >> i) & 1) == 1)             // moveList += "" + (i / 8 + 1) + (i % 8 + 1) + (i / 8) + (i % 8);
+            {
+                int start = (i - 7);
+                int end = (i);
+                Move m = new Move(start, end, false, 'p', true, false, false);
+                moveList.Add(m);   
+            }
+
         }
 
-        PAWN_MOVES = (wht_Pawns << 8) & EMPTY_SQUARES & ~RANK_8; //Forward Moves, if square is empty
-
-        DrawBitboard(PAWN_MOVES);
-        Debug.Log("Drawing" + PAWN_MOVES);
+        //FORWARD MOVE ONCE
+        //----- Forward Moves, if square is empty -----
+        PAWN_MOVES = (wht_Pawns << 8) & EMPTY_SQUARES & ~RANK_8;
+        AVAILABLE_MOVES += PAWN_MOVES;
         for (int i = 0; i < 64; i++)
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
-                //Debug.Log("detected" + i);
-                //Debug.Log("P" + i);
-                //moveList += " / " + (i / 8 + 1) + (i % 8) + (i / 8) + (i % 8);
+                int start = (i - 8);
+                int end = (i);
+                Move m = new Move(start, end, false, 'p', false, false, false);
+                moveList.Add(m);
+                //moveList += " / " + (i / 8 + 1) + " / " + (i % 8) + " / " + (i / 8) + " / " + (i % 8);
             }
-               
         }
-        //
-        PAWN_MOVES = (wht_Pawns << 16) & EMPTY_SQUARES & (EMPTY_SQUARES << 8); //Double Move Forward
-        DrawBitboard(PAWN_MOVES);
+
+        //----- Double Move Forward -----
+        PAWN_MOVES = (wht_Pawns << 16) & EMPTY_SQUARES & (EMPTY_SQUARES << 8) & RANK_4;
+        AVAILABLE_MOVES += PAWN_MOVES;
+        // DrawBitboard(PAWN_MOVES);
         for (int i = 0; i < 64; i++)
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
-                moveList += "" + (i / 8 + 2) + (i % 8) + (i / 8) + (i % 8);
+            {
+                int start = (i - 16);
+                int end = (i);
+                Move m = new Move(start, end, false, 'p', false, false, false);
+                moveList.Add(m);
+            }      
         }
-
-
+          
+        foreach (Move m in moveList)
+        {
+            Debug.Log(m);
+        }
+      
         /*
         
          //Promotion
@@ -384,7 +468,7 @@ public class ChessBoard : MonoBehaviour
                  moveList += "" + (i % 8) + (i % 8) + "QP" + (i % 8) + (i % 8) + "RP" + (i % 8) + (i % 8) + "BP" + (i % 8) + (i % 8) + "KP";
 
          }
-          */
+         
         //Checking for en passant, need to know prior moves
         if (history.Length >= 4)
         {
@@ -407,18 +491,160 @@ public class ChessBoard : MonoBehaviour
                         moveList += "" + (i % 8 + 1) + (i % 8) + " E";
                 }
             }
-        }
+        } */
 
         return moveList;
     }
 
-    public static ulong ReverseBits(ulong x)
+    /*
+     * BLACK PAWN, Enpassant and promotion incomplete
+     */
+    public List<Move> GetBlackPawnMoves(string history, ulong blk_Pawns)
     {
-        string num = "" + x;
-        char[] cNum = num.ToCharArray();
-        Array.Reverse(cNum);
-        num = new string(cNum);
-        return Convert.ToUInt64(num);
+        List<Move> moveList = new List<Move>();
+
+        //RIGHT CAPTURE
+        ulong PAWN_MOVES = (blk_Pawns >> 9) & WHT_PIECES & ~RANK_8 & ~H_FILE;
+        AVAILABLE_MOVES += PAWN_MOVES;
+        for (int i = 0; i < 64; i++) //Iterate through the bitboard
+        {
+            if (((PAWN_MOVES >> i) & 1) == 1)
+            {
+                int start = (i + 9);
+                int end = (i);
+                Move m = new Move(start, end, false, 'p', true, false, false);
+                moveList.Add(m);
+            }
+        }
+
+        //LEFT CAPTURE
+        PAWN_MOVES = (blk_Pawns >> 7) & WHT_PIECES & ~RANK_8 & ~A_FILE;
+        AVAILABLE_MOVES += PAWN_MOVES;
+        for (int i = 0; i < 64; i++) 
+        {
+            if (((PAWN_MOVES >> i) & 1) == 1)         
+            {
+                int start = (i + 7);
+                int end = (i);
+                Move m = new Move(start, end, false, 'p', true, false, false);
+                moveList.Add(m);
+            }
+
+        }
+
+        //FORWARD MOVE ONCE
+        PAWN_MOVES = (blk_Pawns >> 8) & EMPTY_SQUARES & ~RANK_1;
+        AVAILABLE_MOVES += PAWN_MOVES;
+        for (int i = 0; i < 64; i++)
+        {
+            if (((PAWN_MOVES >> i) & 1) == 1)
+            {
+                int start = (i + 8);
+                int end = (i);
+                Move m = new Move(start, end, false, 'p', false, false, false);
+                moveList.Add(m);
+            }
+        }
+
+        //----- Double Move Forward -----
+        PAWN_MOVES = (blk_Pawns >> 16) & EMPTY_SQUARES & (EMPTY_SQUARES >> 8) & RANK_5;
+        AVAILABLE_MOVES += PAWN_MOVES;
+        for (int i = 0; i < 64; i++)
+        {
+            if (((PAWN_MOVES >> i) & 1) == 1)
+            {
+                int start = (i + 16);
+                int end = (i);
+                Move m = new Move(start, end, false, 'p', false, false, false);
+                moveList.Add(m);
+            }
+        }
+
+        /*
+         //Promotion
+         PAWN_MOVES = (wht_Pawns >> 7) & BLK_PIECES & RANK_8 & ~A_FILE; //Promote by right capture
+         for (int i = 0; i < 64; i++)
+         {
+             if (((PAWN_MOVES >> i) & 1) == 1)
+                 moveList += "" + (i % 8 - 1) + (i % 8) + "QP" + (i % 8 - 1) + (i % 8) + "RP" + (i % 8 - 1) + (i % 8) + "BP" + (i % 8 - 1) + (i % 8) + "KP";
+
+         }
+
+         PAWN_MOVES = (wht_Pawns >> 9) & BLK_PIECES & RANK_8 & ~H_FILE; //Promote by left capture
+         for (int i = 0; i < 64; i++)
+         {
+             if (((PAWN_MOVES >> i) & 1) == 1)
+                 moveList += "" + (i % 8 + 1) + (i % 8) + "QP" + (i % 8 + 1) + (i % 8) + "RP" + (i % 8 + 1) + (i % 8) + "BP" + (i % 8 + 1) + (i % 8) + "KP";
+
+         }
+
+         PAWN_MOVES = (wht_Pawns >> 9) & EMPTY_SQUARES & RANK_8; //Promote by forward movement
+         for (int i = 0; i < 64; i++)
+         {
+             if (((PAWN_MOVES >> i) & 1) == 1)
+                 moveList += "" + (i % 8) + (i % 8) + "QP" + (i % 8) + (i % 8) + "RP" + (i % 8) + (i % 8) + "BP" + (i % 8) + (i % 8) + "KP";
+
+         }
+         
+        //Checking for en passant, need to know prior moves
+        if (history.Length >= 4)
+        {
+            //Checks if the last move was a double forward movement
+            if (history[history.Length - 1] == history[history.Length - 3]
+                && Math.Abs(history[history.Length - 2] - history[history.Length - 4]) == 2)
+            {
+                PAWN_MOVES = (wht_Pawns << 1) & BLK_PIECES & RANK_5 & ~A_FILE;
+                // PAWN_MOVES = PAWN_MOVES & ~(PAWN_MOVES - 1);
+                for (int i = 0; i < 64; i++) //Capture Right En Passant
+                {
+                    if (((PAWN_MOVES >> i) & 1) == 1)
+                        moveList += "" + (i % 8 - 1) + (i % 8) + " E";
+                }
+
+                PAWN_MOVES = (wht_Pawns >> 1) & BLK_PIECES & RANK_5 & ~H_FILE;
+                for (int i = 0; i < 64; i++) //Capture Left En Passant
+                {
+                    if (((PAWN_MOVES >> i) & 1) == 1)
+                        moveList += "" + (i % 8 + 1) + (i % 8) + " E";
+                }
+            }
+        } */
+
+        return moveList;
+    }
+
+    public List<Move> GetQueenMoves(string history, ulong queen, int start)
+    {
+        List<Move> moveList = new List<Move>();
+
+        ulong moveUp = (queen << 8) & EMPTY_SQUARES & ~RANK_8;
+        int i = 8;
+
+        Debug.Log(DecimalToBitboard(queen));
+        
+        //FORWARD MOVES (Light-Side Oriented)
+        do {
+            AVAILABLE_MOVES += moveUp;
+            int end = start + i;
+            Move m = new Move(start, end, false, 'Q', false, false, false);
+            moveList.Add(m);
+
+            moveUp = (moveUp << 8) & EMPTY_SQUARES;
+            i += 8;
+        } while (moveUp != 0 || i < 64);
+        
+    
+        /*
+        if(moveUp == 0)
+        {
+            //Check if we can capture a piece
+            ulong captureUp = (queen >> 8) & EMPTY_SQUARES & BLK_PIECES;
+            AVAILABLE_MOVES += captureUp;
+        }*/
+        //AVAILABLE_MOVES += moveUp;
+
+
+        return moveList;
     }
 
     public static ulong GetHorizontalVerticalMoves(int pos)
@@ -436,6 +662,16 @@ public class ChessBoard : MonoBehaviour
         ulong antiDiagonalMoves = ((OCCUPIED & ANTI_DIAGONALS[(pos / 8) + 7 - (pos % 8)]) - (2 * ReverseBits(binaryS)) ^ ReverseBits(OCCUPIED & ANTI_DIAGONALS[(pos / 8) + 7 - (pos % 8)]) - (2 * ReverseBits(binaryS)));
         return (diagonalMoves & DIAGONALS[(pos / 8) + (pos % 8)] | antiDiagonalMoves & ANTI_DIAGONALS[(pos / 8) + 7 - (pos % 8)]);
     }
+
+    public static ulong ReverseBits(ulong x)
+    {
+        string num = "" + x;
+        char[] cNum = num.ToCharArray();
+        Array.Reverse(cNum);
+        num = new string(cNum);
+        return Convert.ToUInt64(num);
+    }
+
 
     public string DecimalToBitboard(ulong num)
     {

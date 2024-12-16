@@ -37404,6 +37404,7 @@ MonoBehaviour:
   board: {fileID: 2982874843900492408}
   gameUI: {fileID: 8306028087200419327}
   SideToMove: 1
+  DEBUG_MODE: 1
 --- !u!4 &1578266544
 Transform:
   m_ObjectHideFlags: 0
@@ -52276,6 +52277,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4048227457743884181, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4503687537945098482, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -52287,6 +52292,10 @@ PrefabInstance:
     - target: {fileID: 4961854314013464309, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5105601825839826712, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
+      propertyPath: initialFEN
+      value: 8/8/8/8/4Q3/8/8/8
       objectReference: {fileID: 0}
     - target: {fileID: 5105601825839826712, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
       propertyPath: file.Array.size
