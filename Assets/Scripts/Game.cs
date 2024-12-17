@@ -114,6 +114,9 @@ public class Game : MonoBehaviour
         return selectedPiece;
     }
 
+    /*
+     * Makes a piece move from player input and updates the board
+     */
     public void MakePlayerMove(Square destination)
     {
         if (SideToMove == Side.White) SideToMove = Side.Black;
@@ -133,6 +136,8 @@ public class Game : MonoBehaviour
         destination.SetNewPiece(selectedPiece);
         selectedPiece.DisableOutline();
         selectedPiece = null;
+
+        board.PosToBitBoard(); //Updates the bitboards and positions
     }
 
     // Start is called before the first frame update

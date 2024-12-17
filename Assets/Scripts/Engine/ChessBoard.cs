@@ -177,7 +177,7 @@ public class ChessBoard : MonoBehaviour
                // wht_King += Convert.ToUInt64(b, 2);
                 break;
             case ('Q'):
-                moveList = GetQueenMoves("", Convert.ToUInt64(b, 2), i);
+                moveList = GetRookMoves("", Convert.ToUInt64(b, 2), code, Game.Side.White);
                 break;
             default:
                 break;
@@ -190,7 +190,6 @@ public class ChessBoard : MonoBehaviour
 
         DrawBitboard(AVAILABLE_MOVES); //Show available moves
         AVAILABLE_MOVES = 0; //Reset available moves
-        PosToBitBoard();
     }
 
     //Retrieve the bitboard value for all pieces
@@ -375,7 +374,7 @@ public class ChessBoard : MonoBehaviour
     {
         List<Move> moveList = new List<Move>();
 
-        //RIGHT CAPTURE
+        //RIGHT CAPTURE(actually this might be a left capture, check the formula later)
         //All pieces that a pawn can capture to the right if that piece is not on Rank8(promotion) or A File(can't right capture)
         ulong PAWN_MOVES = (wht_Pawns << 9) & BLK_PIECES & ~RANK_8 & ~A_FILE;
         AVAILABLE_MOVES += PAWN_MOVES;
@@ -613,27 +612,108 @@ public class ChessBoard : MonoBehaviour
         return moveList;
     }
 
-    public List<Move> GetQueenMoves(string history, ulong queen, int start)
+    /*
+     * BLACK OR WHITE ROOK
+     */
+    public List<Move> GetRookMoves(string history, ulong rooks, char pieceCode, Game.Side side)
     {
+        ulong CAPTURABLE;
+
+        if (side == Game.Side.Black) CAPTURABLE = WHT_PIECES;
+        else CAPTURABLE = BLK_PIECES;
+
         List<Move> moveList = new List<Move>();
 
-        ulong moveUp = (queen << 8) & EMPTY_SQUARES & ~RANK_8;
-        int i = 8;
-
-        Debug.Log(DecimalToBitboard(queen));
-        
         //FORWARD MOVES (Light-Side Oriented)
-        do {
+        ulong moveUp = (rooks << 8) & EMPTY_SQUARES;
+        int offset = 8;
+        while (moveUp != 0)
+        {
             AVAILABLE_MOVES += moveUp;
-            int end = start + i;
-            Move m = new Move(start, end, false, 'Q', false, false, false);
-            moveList.Add(m);
+            for (int j = 0; j < 64; j++) //Iterate through the bitboard
+                {
+                    if (((moveUp >> j) & 1) == 1)
+                    {
+                        int start = j - offset;
+                        int end = j;
+                        
+                        Move m = new Move(start, end, false, 'Q', false, false, false);
+                        moveList.Add(m);
+                    }
+                }
 
             moveUp = (moveUp << 8) & EMPTY_SQUARES;
-            i += 8;
-        } while (moveUp != 0 || i < 64);
+            offset += 8;
+
+        }
+
+        //BACKWARDS MOVES (Light-Side Oriented)
+        moveUp = (rooks >> 8) & EMPTY_SQUARES;
+        offset = 8;
+        while (moveUp != 0) {
+            AVAILABLE_MOVES += moveUp;
+            for (int j = 0; j < 64; j++) //Iterate through the bitboard
+                {
+                    if (((moveUp >> j) & 1) == 1)
+                    {
+                        int start = j + offset;
+                        int end = j;   
+
+                        Move m = new Move(start, end, false, 'Q', false, false, false);
+                        moveList.Add(m);
+                    }
+                }
+
+            moveUp = (moveUp >> 8) & EMPTY_SQUARES;
+            offset += 8;
+        }
+
+        //LATERAL MOVEMENT LEFT
+        moveUp = (rooks >> 1) & EMPTY_SQUARES & ~H_FILE;
+        offset = 1;
+        while (moveUp != 0)
+        {
+            AVAILABLE_MOVES += moveUp;
+            
+            for (int j = 0; j < 64; j++) //Iterate through the bitboard
+            {
+                if (((moveUp >> j) & 1) == 1)
+                {
+                    int start = j + offset;
+                    int end = j;
+
+                    Move m = new Move(start, end, false, 'Q', false, false, false);
+                    moveList.Add(m);
+                }
+            }
+            moveUp = (moveUp >> 1) & EMPTY_SQUARES & ~H_FILE;
+            offset += 1;
+        }
+
+        //LATERAL MOVEMENT RIGHT
+        moveUp = (rooks << 1) & EMPTY_SQUARES & ~H_FILE;
+        offset = 1;
+        while (moveUp != 0)
+        {
+            AVAILABLE_MOVES += moveUp;
+
+            for (int j = 0; j < 64; j++) //Iterate through the bitboard
+            {
+                if (((moveUp >> j) & 1) == 1)
+                {
+                    int start = j - offset;
+                    int end = j;
+
+                    Move m = new Move(start, end, false, 'Q', false, false, false);
+                    moveList.Add(m);
+                }
+            }
+
+            moveUp = (moveUp << 1) & EMPTY_SQUARES & ~A_FILE;
+            offset += 1;
+        }
         
-    
+
         /*
         if(moveUp == 0)
         {
