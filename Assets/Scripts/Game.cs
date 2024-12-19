@@ -49,6 +49,7 @@ public class Game : MonoBehaviour
     public void StartGameAsWhite()
     {
         gameUI.HideMenu();
+        gameUI.ShowHud();
         playerSide = Side.White;
         gameUI.ShowPlayerToMoveLabel(playerSide);
     }
@@ -56,6 +57,7 @@ public class Game : MonoBehaviour
     public void StartGameAsBlack()
     {
         gameUI.HideMenu();
+        gameUI.ShowHud();
         playerSide = Side.Black;
         gameUI.ShowPlayerToMoveLabel(playerSide);
     }

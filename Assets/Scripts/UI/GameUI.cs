@@ -5,8 +5,8 @@ using UnityEngine;
 public class GameUI : MonoBehaviour
 {
     public PlayerToMoveLabel playerToMoveLabel;
-    public List<GameObject> canvasObjects;
-
+    public List<GameObject> menuObjects;
+    public List<GameObject> hudObjects;
     public void ShowPlayerToMoveLabel(Game.Side playerSide)
     {
         playerToMoveLabel.UpdateLabel(playerSide);
@@ -15,15 +15,23 @@ public class GameUI : MonoBehaviour
 
     public void HideMenu()
     {
-        foreach(GameObject obj in canvasObjects)
+        foreach(GameObject obj in menuObjects)
         {
             obj.SetActive(false);
         }
     }
 
+    public void ShowHud()
+    {
+        foreach (GameObject obj in hudObjects)
+        {
+            obj.SetActive(true);
+        }
+    }
+
     public void ShowMenu()
     {
-        foreach (GameObject obj in canvasObjects)
+        foreach (GameObject obj in menuObjects)
         {
             obj.SetActive(true);
         }
