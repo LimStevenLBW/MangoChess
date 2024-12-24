@@ -751,39 +751,21 @@ public class ChessBoard : MonoBehaviour
 
         List<Move> moveList = new List<Move>();
 
-        while (nextMove != 0 && !isCapture)
-        {
-            if ((nextMove << 8 & CAPTURABLE) != 0)
-            {
-                nextMove = nextMove << 8 & CAPTURABLE;
-                isCapture = true;
-            }
-            else if ((nextMove << 8 & EMPTY_SQUARES) != 0) nextMove = nextMove << 8 & EMPTY_SQUARES;
-            else break;
-
-            AVAILABLE_MOVES += nextMove;
-
-            for (int j = 0; j < 64; j++) //Iterate through the bitboard
-            {
-                if (((nextMove >> j) & 1) == 1)
-                {
-                    Move m = new Move(j - offset, j, code, isCapture, false, false);
-                    moveList.Add(m);
-                }
-            }
-
-            offset += 8;
-        }
-
+        #region TOWARDS TOP-RIGHT (Light-Side Oriented)
         ulong nextMove = bishop;
         int offset = 1;
         bool isCapture = false;
 
-        //TOWARDS TOP-RIGHT
-        ulong nextMove = (bishop << 9) & EMPTY_SQUARES & ~A_FILE;
-
         while (nextMove != 0 && !isCapture)
         {
+            if (((nextMove << 9) & CAPTURABLE & ~A_FILE) != 0)
+            {
+                nextMove = (nextMove << 9) & CAPTURABLE & ~A_FILE;
+                isCapture = true;
+            }
+            else if (((nextMove << 9) & EMPTY_SQUARES & ~A_FILE) != 0) nextMove = (nextMove << 9 & EMPTY_SQUARES & ~A_FILE);
+            else break;
+
             AVAILABLE_MOVES += nextMove;
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
             {
@@ -796,15 +778,25 @@ public class ChessBoard : MonoBehaviour
                     moveList.Add(m);
                 }
             }
-            nextMove = (nextMove << 9) & EMPTY_SQUARES & ~A_FILE;
             offset += 1;
         }
-
-        //TOWARDS TOP-LEFT
-        nextMove = (bishop << 7) & EMPTY_SQUARES & ~H_FILE;
+        #endregion
+        
+        #region TOWARDS TOP-LEFT (Light-Side Oriented)
+        nextMove = bishop;
         offset = 1;
-        while (nextMove != 0)
+        isCapture = false;
+
+        while (nextMove != 0 && !isCapture)
         {
+            if (((nextMove << 7) & CAPTURABLE & ~H_FILE) != 0)
+            {
+                nextMove = (nextMove << 7) & CAPTURABLE & ~H_FILE;
+                isCapture = true;
+            }
+            else if (((nextMove << 7) & EMPTY_SQUARES & ~H_FILE) != 0) nextMove = (nextMove << 7) & EMPTY_SQUARES & ~H_FILE;
+            else break;
+
             AVAILABLE_MOVES += nextMove;
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
             {
@@ -817,52 +809,73 @@ public class ChessBoard : MonoBehaviour
                     moveList.Add(m);
                 }
             }
-            nextMove = (nextMove << 7) & EMPTY_SQUARES & ~H_FILE;
             offset += 1;
         }
+        #endregion
 
-        //TOWARDS BOTTOM-RIGHT
-        nextMove = (bishop >> 7) & EMPTY_SQUARES & ~A_FILE;
-        offset = 1;
-        while (nextMove != 0)
-        {
-            AVAILABLE_MOVES += nextMove;
-            for (int j = 0; j < 64; j++) //Iterate through the bitboard
-            {
-                if (((nextMove >> j) & 1) == 1)
-                {
-                    int start = j + 8 * offset - offset;
-                    int end = j;
+       #region TOWARDS BOTTOM-RIGHT (Light-Side Oriented)
+       nextMove = bishop;
+       offset = 1;
+       isCapture = false;
 
-                    Move m = new Move(start, end, code, false, false, false);
-                    moveList.Add(m);
-                }
-            }
-            nextMove = (nextMove >> 7) & EMPTY_SQUARES & ~A_FILE;
-            offset += 1;
-        }
+       while (nextMove != 0 && !isCapture)
+       {
+           if (((nextMove >> 7) & CAPTURABLE & ~A_FILE) != 0)
+           {
+               nextMove = (nextMove >> 7) & CAPTURABLE & ~A_FILE;
+               isCapture = true;
+           }
+           else if (((nextMove >> 7) & EMPTY_SQUARES & ~A_FILE) != 0) nextMove = (nextMove >> 7) & EMPTY_SQUARES & ~A_FILE;
+           else break;
 
-        //TOWARDS BOTTOM-LEFT
-        nextMove = (bishop >> 9) & EMPTY_SQUARES & ~H_FILE;
-        offset = 1;
-        while (nextMove != 0)
-        {
-            AVAILABLE_MOVES += nextMove;
-            for (int j = 0; j < 64; j++) //Iterate through the bitboard
-            {
-                if (((nextMove >> j) & 1) == 1)
-                {
-                    int start = j + 8 * offset + offset;
-                    int end = j;
+           AVAILABLE_MOVES += nextMove;
+           for (int j = 0; j < 64; j++) //Iterate through the bitboard
+           {
+               if (((nextMove >> j) & 1) == 1)
+               {
+                   int start = j + 8 * offset - offset;
+                   int end = j;
 
-                    Move m = new Move(start, end, code, false, false, false);
-                    moveList.Add(m);
-                }
-            }
-            nextMove = (nextMove >> 9) & EMPTY_SQUARES & ~H_FILE;
-            offset += 1;
-        }
+                   Move m = new Move(start, end, code, false, false, false);
+                   moveList.Add(m);
+               }
+           }
+           offset += 1;
+       }
+       #endregion
 
+
+       #region TOWARDS BOTTOM-LEFT
+       nextMove = bishop;
+       offset = 1;
+       isCapture = false;
+
+       while (nextMove != 0 && !isCapture)
+       {
+           if (((nextMove >> 9) & CAPTURABLE & ~H_FILE) != 0)
+           {
+               nextMove = (nextMove >> 9) & CAPTURABLE & ~H_FILE;
+               isCapture = true;
+           }
+           else if (((nextMove >> 9) & EMPTY_SQUARES & ~H_FILE) != 0) nextMove = (nextMove >> 9) & EMPTY_SQUARES & ~H_FILE;
+           else break;
+
+           AVAILABLE_MOVES += nextMove;
+           for (int j = 0; j < 64; j++) //Iterate through the bitboard
+           {
+               if (((nextMove >> j) & 1) == 1)
+               {
+                   int start = j + 8 * offset + offset;
+                   int end = j;
+
+                   Move m = new Move(start, end, code, false, false, false);
+                   moveList.Add(m);
+               }
+           }
+           offset += 1;
+       }
+       #endregion
+        
         return moveList;
     }
 
