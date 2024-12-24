@@ -306,7 +306,7 @@ public class ChessBoard : MonoBehaviour
                         wht_King += Convert.ToUInt64(b, 2);
                         break;
                     case ('Q'):
-                        blk_Queens += Convert.ToUInt64(b, 2);
+                        wht_Queens += Convert.ToUInt64(b, 2);
                         break;
                     default:
                         break;
@@ -604,93 +604,129 @@ public class ChessBoard : MonoBehaviour
     }
 
     /*
-     * BLACK OR WHITE ROOK
+     * BLACK OR WHITE ROOK, only works for one piece
      */
-    public List<Move> GetRookMoves(string history, ulong rooks, char code)
+    public List<Move> GetRookMoves(string history, ulong rook, char code)
     {
         ulong CAPTURABLE;
-
         if(char.IsUpper(code)) CAPTURABLE = BLK_PIECES;
         else CAPTURABLE = WHT_PIECES;
 
         List<Move> moveList = new List<Move>();
 
-        //FORWARD MOVES (Light-Side Oriented)
-        ulong moveUp = (rooks << 8) & EMPTY_SQUARES;
+        #region FORWARD MOVES (Light-Side Oriented)
+        ulong nextMove = rook;
         int offset = 8;
-        while (moveUp != 0)
+        bool isCapture = false;
+
+        while (nextMove != 0 && !isCapture)
         {
-            AVAILABLE_MOVES += moveUp;
+            if ((nextMove << 8 & CAPTURABLE) != 0)
+            {
+                nextMove = nextMove << 8 & CAPTURABLE;
+                isCapture = true;
+            }
+            else if ((nextMove << 8 & EMPTY_SQUARES) != 0) nextMove = nextMove << 8 & EMPTY_SQUARES;
+            else break;
+
+            AVAILABLE_MOVES += nextMove;
+            
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
+            {
+                if (((nextMove >> j) & 1) == 1)
                 {
-                    if (((moveUp >> j) & 1) == 1)
-                    {
-                        int start = j - offset;
-                        int end = j;
-                        
-                        Move m = new Move(start, end, code, false, false, false);
-                        moveList.Add(m);
-                    }
+                    Move m = new Move(j - offset, j, code, isCapture, false, false);
+                    moveList.Add(m);    
                 }
+            }
 
-            moveUp = (moveUp << 8) & EMPTY_SQUARES;
             offset += 8;
-
         }
+        #endregion
 
-        //BACKWARDS MOVES (Light-Side Oriented)
-        moveUp = (rooks >> 8) & EMPTY_SQUARES;
+        #region BACKWARDS MOVES (Light-Side Oriented)
+        nextMove = rook;
         offset = 8;
-        while (moveUp != 0) {
-            AVAILABLE_MOVES += moveUp;
+        isCapture = false;
+
+        while (nextMove != 0 && !isCapture)
+        {
+            if ((nextMove >> 8 & CAPTURABLE) != 0)
+            {
+                nextMove = nextMove >> 8 & CAPTURABLE;
+                isCapture = true;
+            }
+            else if ((nextMove >> 8 & EMPTY_SQUARES) != 0) nextMove = nextMove >> 8 & EMPTY_SQUARES;
+            else break;
+
+            AVAILABLE_MOVES += nextMove;
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
                 {
-                    if (((moveUp >> j) & 1) == 1)
+                    if (((nextMove >> j) & 1) == 1)
                     {
                         int start = j + offset;
                         int end = j;   
 
-                        Move m = new Move(start, end, code, false, false, false);
+                        Move m = new Move(start, end, code, isCapture, false, false);
                         moveList.Add(m);
                     }
                 }
-
-            moveUp = (moveUp >> 8) & EMPTY_SQUARES;
             offset += 8;
         }
+        #endregion
 
-        //LATERAL MOVEMENT LEFT
-        moveUp = (rooks >> 1) & EMPTY_SQUARES & ~H_FILE;
+        #region LATERAL MOVEMENT LEFT
+        nextMove = rook;
         offset = 1;
-        while (moveUp != 0)
+        isCapture = false;
+
+        while (nextMove != 0 && !isCapture)
         {
-            AVAILABLE_MOVES += moveUp;
+            if ((nextMove >> 1 & CAPTURABLE & ~H_FILE) != 0)
+            {
+                nextMove = nextMove >> 1 & CAPTURABLE & ~H_FILE;
+                isCapture = true;
+            }
+            else if ((nextMove >> 1 & EMPTY_SQUARES & ~H_FILE) != 0) nextMove = nextMove >> 1 & EMPTY_SQUARES & ~H_FILE;
+            else break;
+            AVAILABLE_MOVES += nextMove;
             
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
             {
-                if (((moveUp >> j) & 1) == 1)
+                if (((nextMove >> j) & 1) == 1)
                 {
                     int start = j + offset;
                     int end = j;
 
-                    Move m = new Move(start, end, code, false, false, false);
+                    Move m = new Move(start, end, code, isCapture, false, false);
                     moveList.Add(m);
                 }
             }
-            moveUp = (moveUp >> 1) & EMPTY_SQUARES & ~H_FILE;
+
             offset += 1;
         }
+        #endregion
 
-        //LATERAL MOVEMENT RIGHT
-        moveUp = (rooks << 1) & EMPTY_SQUARES & ~A_FILE;
+        #region LATERAL MOVEMENT RIGHT
+        nextMove = rook;
         offset = 1;
-        while (moveUp != 0)
+        isCapture = false;
+
+        while (nextMove != 0 && !isCapture)
         {
-            AVAILABLE_MOVES += moveUp;
+            if ((nextMove << 1 & CAPTURABLE & ~A_FILE) != 0)
+            {
+                nextMove = nextMove << 1 & CAPTURABLE & ~A_FILE;
+                isCapture = true;
+            }
+            else if ((nextMove << 1 & EMPTY_SQUARES & ~A_FILE) != 0) nextMove = (nextMove << 1) & EMPTY_SQUARES & ~A_FILE;
+            else break;
+            
+            AVAILABLE_MOVES += nextMove;
 
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
             {
-                if (((moveUp >> j) & 1) == 1)
+                if (((nextMove >> j) & 1) == 1)
                 {
                     int start = j - offset;
                     int end = j;
@@ -700,25 +736,14 @@ public class ChessBoard : MonoBehaviour
                 }
             }
 
-            moveUp = (moveUp << 1) & EMPTY_SQUARES & ~A_FILE;
             offset += 1;
         }
-        
-
-        /*
-        if(moveUp == 0)
-        {
-            //Check if we can capture a piece
-            ulong captureUp = (queen >> 8) & EMPTY_SQUARES & BLK_PIECES;
-            AVAILABLE_MOVES += captureUp;
-        }*/
-        //AVAILABLE_MOVES += moveUp;
-
+        #endregion
 
         return moveList;
     }
 
-    public List<Move> GetBishopMoves(string history, ulong bishops, char code)
+    public List<Move> GetBishopMoves(string history, ulong bishop, char code)
     {
         ulong CAPTURABLE;
         if (char.IsUpper(code)) CAPTURABLE = BLK_PIECES;
@@ -726,15 +751,43 @@ public class ChessBoard : MonoBehaviour
 
         List<Move> moveList = new List<Move>();
 
-        //TOWARDS TOP-RIGHT
-        ulong moveUp = (bishops << 9) & EMPTY_SQUARES & ~A_FILE;
-        int offset = 1;
-        while (moveUp != 0)
+        while (nextMove != 0 && !isCapture)
         {
-            AVAILABLE_MOVES += moveUp;
+            if ((nextMove << 8 & CAPTURABLE) != 0)
+            {
+                nextMove = nextMove << 8 & CAPTURABLE;
+                isCapture = true;
+            }
+            else if ((nextMove << 8 & EMPTY_SQUARES) != 0) nextMove = nextMove << 8 & EMPTY_SQUARES;
+            else break;
+
+            AVAILABLE_MOVES += nextMove;
+
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
             {
-                if (((moveUp >> j) & 1) == 1)
+                if (((nextMove >> j) & 1) == 1)
+                {
+                    Move m = new Move(j - offset, j, code, isCapture, false, false);
+                    moveList.Add(m);
+                }
+            }
+
+            offset += 8;
+        }
+
+        ulong nextMove = bishop;
+        int offset = 1;
+        bool isCapture = false;
+
+        //TOWARDS TOP-RIGHT
+        ulong nextMove = (bishop << 9) & EMPTY_SQUARES & ~A_FILE;
+
+        while (nextMove != 0 && !isCapture)
+        {
+            AVAILABLE_MOVES += nextMove;
+            for (int j = 0; j < 64; j++) //Iterate through the bitboard
+            {
+                if (((nextMove >> j) & 1) == 1)
                 {
                     int start = j - 8 * offset - offset;
                     int end = j;
@@ -743,19 +796,19 @@ public class ChessBoard : MonoBehaviour
                     moveList.Add(m);
                 }
             }
-            moveUp = (moveUp << 9) & EMPTY_SQUARES & ~A_FILE;
+            nextMove = (nextMove << 9) & EMPTY_SQUARES & ~A_FILE;
             offset += 1;
         }
 
         //TOWARDS TOP-LEFT
-        moveUp = (bishops << 7) & EMPTY_SQUARES & ~H_FILE;
+        nextMove = (bishop << 7) & EMPTY_SQUARES & ~H_FILE;
         offset = 1;
-        while (moveUp != 0)
+        while (nextMove != 0)
         {
-            AVAILABLE_MOVES += moveUp;
+            AVAILABLE_MOVES += nextMove;
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
             {
-                if (((moveUp >> j) & 1) == 1)
+                if (((nextMove >> j) & 1) == 1)
                 {
                     int start = j - 8 * offset + offset;
                     int end = j;
@@ -764,19 +817,19 @@ public class ChessBoard : MonoBehaviour
                     moveList.Add(m);
                 }
             }
-            moveUp = (moveUp << 7) & EMPTY_SQUARES & ~H_FILE;
+            nextMove = (nextMove << 7) & EMPTY_SQUARES & ~H_FILE;
             offset += 1;
         }
 
         //TOWARDS BOTTOM-RIGHT
-        moveUp = (bishops >> 7) & EMPTY_SQUARES & ~A_FILE;
+        nextMove = (bishop >> 7) & EMPTY_SQUARES & ~A_FILE;
         offset = 1;
-        while (moveUp != 0)
+        while (nextMove != 0)
         {
-            AVAILABLE_MOVES += moveUp;
+            AVAILABLE_MOVES += nextMove;
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
             {
-                if (((moveUp >> j) & 1) == 1)
+                if (((nextMove >> j) & 1) == 1)
                 {
                     int start = j + 8 * offset - offset;
                     int end = j;
@@ -785,19 +838,19 @@ public class ChessBoard : MonoBehaviour
                     moveList.Add(m);
                 }
             }
-            moveUp = (moveUp >> 7) & EMPTY_SQUARES & ~A_FILE;
+            nextMove = (nextMove >> 7) & EMPTY_SQUARES & ~A_FILE;
             offset += 1;
         }
 
         //TOWARDS BOTTOM-LEFT
-        moveUp = (bishops >> 9) & EMPTY_SQUARES & ~H_FILE;
+        nextMove = (bishop >> 9) & EMPTY_SQUARES & ~H_FILE;
         offset = 1;
-        while (moveUp != 0)
+        while (nextMove != 0)
         {
-            AVAILABLE_MOVES += moveUp;
+            AVAILABLE_MOVES += nextMove;
             for (int j = 0; j < 64; j++) //Iterate through the bitboard
             {
-                if (((moveUp >> j) & 1) == 1)
+                if (((nextMove >> j) & 1) == 1)
                 {
                     int start = j + 8 * offset + offset;
                     int end = j;
@@ -806,7 +859,7 @@ public class ChessBoard : MonoBehaviour
                     moveList.Add(m);
                 }
             }
-            moveUp = (moveUp >> 9) & EMPTY_SQUARES & ~H_FILE;
+            nextMove = (nextMove >> 9) & EMPTY_SQUARES & ~H_FILE;
             offset += 1;
         }
 
@@ -822,11 +875,11 @@ public class ChessBoard : MonoBehaviour
         List<Move> moveList = new List<Move>();
 
         //FORWARD-RIGHT
-        ulong moveUp = (knights << 17) & EMPTY_SQUARES & ~A_FILE;
-        AVAILABLE_MOVES += moveUp;
+        ulong nextMove = (knights << 17) & EMPTY_SQUARES & ~A_FILE;
+        AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
-            if (((moveUp >> j) & 1) == 1)
+            if (((nextMove >> j) & 1) == 1)
             {
                 int start = j - 17;
                 int end = j;
@@ -837,11 +890,11 @@ public class ChessBoard : MonoBehaviour
         }
 
         //FORWARD-LEFT
-        moveUp = (knights << 15) & EMPTY_SQUARES & ~H_FILE;
-        AVAILABLE_MOVES += moveUp;
+        nextMove = (knights << 15) & EMPTY_SQUARES & ~H_FILE;
+        AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
-            if (((moveUp >> j) & 1) == 1)
+            if (((nextMove >> j) & 1) == 1)
             {
                 int start = j - 15;
                 int end = j;
@@ -852,11 +905,11 @@ public class ChessBoard : MonoBehaviour
         }
 
         //LEFT-FORWARD
-        moveUp = (knights << 6) & EMPTY_SQUARES & ~H_FILE & ~G_FILE;
-        AVAILABLE_MOVES += moveUp;
+        nextMove = (knights << 6) & EMPTY_SQUARES & ~H_FILE & ~G_FILE;
+        AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
-            if (((moveUp >> j) & 1) == 1)
+            if (((nextMove >> j) & 1) == 1)
             {
                 int start = j - 6;
                 int end = j;
@@ -867,11 +920,11 @@ public class ChessBoard : MonoBehaviour
         }
 
         //LEFT-BACKWARDS
-        moveUp = (knights >> 10) & EMPTY_SQUARES & ~H_FILE & ~G_FILE;
-        AVAILABLE_MOVES += moveUp;
+        nextMove = (knights >> 10) & EMPTY_SQUARES & ~H_FILE & ~G_FILE;
+        AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
-            if (((moveUp >> j) & 1) == 1)
+            if (((nextMove >> j) & 1) == 1)
             {
                 int start = j + 10;
                 int end = j;
@@ -882,11 +935,11 @@ public class ChessBoard : MonoBehaviour
         }
 
         //RIGHT-FORWARD
-        moveUp = (knights << 10) & EMPTY_SQUARES & ~A_FILE & ~B_FILE;
-        AVAILABLE_MOVES += moveUp;
+        nextMove = (knights << 10) & EMPTY_SQUARES & ~A_FILE & ~B_FILE;
+        AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
-            if (((moveUp >> j) & 1) == 1)
+            if (((nextMove >> j) & 1) == 1)
             {
                 int start = j - 10;
                 int end = j;
@@ -897,11 +950,11 @@ public class ChessBoard : MonoBehaviour
         }
 
         //RIGHT-BACKWARDS
-        moveUp = (knights >> 6) & EMPTY_SQUARES & ~A_FILE & ~B_FILE;
-        AVAILABLE_MOVES += moveUp;
+        nextMove = (knights >> 6) & EMPTY_SQUARES & ~A_FILE & ~B_FILE;
+        AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
-            if (((moveUp >> j) & 1) == 1)
+            if (((nextMove >> j) & 1) == 1)
             {
                 int start = j + 6;
                 int end = j;
@@ -912,11 +965,11 @@ public class ChessBoard : MonoBehaviour
         }
 
         //BACKWARDS-LEFT
-        moveUp = (knights >> 17) & EMPTY_SQUARES & ~H_FILE;
-        AVAILABLE_MOVES += moveUp;
+        nextMove = (knights >> 17) & EMPTY_SQUARES & ~H_FILE;
+        AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
-            if (((moveUp >> j) & 1) == 1)
+            if (((nextMove >> j) & 1) == 1)
             {
                 int start = j + 17;
                 int end = j;
@@ -927,11 +980,11 @@ public class ChessBoard : MonoBehaviour
         }
 
         //BACKWARDS-RIGHT
-        moveUp = (knights >> 15) & EMPTY_SQUARES & ~H_FILE;
-        AVAILABLE_MOVES += moveUp;
+        nextMove = (knights >> 15) & EMPTY_SQUARES & ~A_FILE;
+        AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
-            if (((moveUp >> j) & 1) == 1)
+            if (((nextMove >> j) & 1) == 1)
             {
                 int start = j + 15;
                 int end = j;
@@ -948,34 +1001,34 @@ public class ChessBoard : MonoBehaviour
 
     public List<Move> GetKingMoves(string history, ulong king, char code)
     {
-        ulong CAPTURABLE;
+        ulong FRIENDLY;
 
-        if (char.IsUpper(code)) CAPTURABLE = BLK_PIECES;
-        else CAPTURABLE = WHT_PIECES;
+        if (char.IsUpper(code)) FRIENDLY = WHT_PIECES;
+        else FRIENDLY = BLK_PIECES;
 
         List<Move> moveList = new List<Move>();
 
-        //FORWARD MOVE
-        ulong KING_MOVES = (king << 8) & EMPTY_SQUARES;
-        KING_MOVES += (king << 7) & EMPTY_SQUARES;
-        KING_MOVES += (king << 9) & EMPTY_SQUARES;
+        //8 Way Movement Check
+        ulong KING_MOVES = (king << 8) & ~FRIENDLY; // Forward
+        KING_MOVES += (king << 7) & ~FRIENDLY & ~H_FILE; //Top-Left
+        KING_MOVES += (king << 9) & ~FRIENDLY & ~A_FILE; //Top-Right
 
-        KING_MOVES += (king >> 1) & EMPTY_SQUARES;
-        KING_MOVES += (king << 1) & EMPTY_SQUARES;
+        KING_MOVES += (king >> 1) & ~FRIENDLY & ~H_FILE; //Left
+        KING_MOVES += (king << 1) & ~FRIENDLY & ~A_FILE; //Right
 
-        KING_MOVES += (king >> 8) & EMPTY_SQUARES;
-        KING_MOVES += (king >> 7) & EMPTY_SQUARES;
-        KING_MOVES += (king >> 9) & EMPTY_SQUARES;
-
+        KING_MOVES += (king >> 8) & ~FRIENDLY; //Backwards
+        KING_MOVES += (king >> 7) & ~FRIENDLY & ~A_FILE; //Bottom-Right
+        KING_MOVES += (king >> 9) & ~FRIENDLY & ~H_FILE; //Bottom-Left
+        int start = -1; //fix later
 
         AVAILABLE_MOVES += KING_MOVES;
-        for (int i = 0; i < 64; i++)
-        {
+        for (int i = 0; i < 64; i++) //will need a helper method for trailing zero counting
+        {// int i = long.number of trailingzeros(king moves); i < 64 - ulong.numberofleadingzeros(king moves); i++
             if (((KING_MOVES >> i) & 1) == 1)
             {
-                int start = (i - 8);
+                if (start == -1) start = i + 9;
                 int end = (i);
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, i, code, false, false, false);
                 moveList.Add(m);
             }
         }

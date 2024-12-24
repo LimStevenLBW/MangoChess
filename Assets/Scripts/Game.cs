@@ -132,7 +132,7 @@ public class Game : MonoBehaviour
         Piece capture = destination.GetCurrentPiece();
         if(capture == null)
         {
-            Debug.Log("not a capture");
+            
         }
         else
         {
