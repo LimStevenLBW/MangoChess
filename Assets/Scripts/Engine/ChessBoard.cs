@@ -22,7 +22,6 @@ public class ChessBoard : MonoBehaviour
 
         public override string ToString() => $"start{start}, end{end}; {char.ToUpper(piece)}" + (isCapture ? "x" : "");
 
-
         int start;       //origin and destination squares (0 - 63)
         int end;
         //Game.Side side;           
@@ -500,9 +499,7 @@ public class ChessBoard : MonoBehaviour
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
-                int start = (i + 9);
-                int end = (i);
-                Move m = new Move(start, end, code, true, false, false);
+                Move m = new Move(i + 9, i, code, true, false, false);
                 moveList.Add(m);
             }
         }
@@ -514,9 +511,7 @@ public class ChessBoard : MonoBehaviour
         {
             if (((PAWN_MOVES >> i) & 1) == 1)         
             {
-                int start = (i + 7);
-                int end = (i);
-                Move m = new Move(start, end, code, true, false, false);
+                Move m = new Move(i+7, i, code, true, false, false);
                 moveList.Add(m);
             }
 
@@ -529,9 +524,7 @@ public class ChessBoard : MonoBehaviour
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
-                int start = (i + 8);
-                int end = (i);
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(i+8, i, code, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -543,9 +536,7 @@ public class ChessBoard : MonoBehaviour
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
-                int start = (i + 16);
-                int end = (i);
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(i+16, i, code, false, false, false);
                 moveList.Add(m);
             }
         }

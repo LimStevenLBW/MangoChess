@@ -18,7 +18,7 @@ public class GameUI : MonoBehaviour
         foreach(GameObject obj in menuObjects)
         {
             obj.SetActive(false);
-        }
+        } 
     }
 
     public void ShowHud()
