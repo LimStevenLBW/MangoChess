@@ -8,7 +8,8 @@ public class Game : MonoBehaviour
     public GameUI gameUI;
     public Side SideToMove = Side.White;
     public bool DEBUG_MODE;
-
+    public GameAdvantage gameAdvantage;
+    public Evaluation evaluation;
     public enum Side
     {
         Undecided,
@@ -144,6 +145,8 @@ public class Game : MonoBehaviour
         selectedPiece = null;
 
         board.PosToBitBoard(); //Updates the bitboards and positions
+
+        gameAdvantage.UpdateAdvantage(evaluation.GetEvaluation());
     }
 
     // Start is called before the first frame update
