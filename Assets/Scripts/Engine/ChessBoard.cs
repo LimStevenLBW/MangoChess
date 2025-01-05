@@ -137,27 +137,28 @@ public class ChessBoard : MonoBehaviour
         string b = "0000000000000000000000000000000000000000000000000000000000000000";
         int i = piece.GetSquare().GetID();
         b = b.Substring(i) + '1' + b.Substring(0, i);
-        Char code = piece.GetCode();
+        char code = piece.GetCode();
 
         switch (code)
         {
             case ('r'):
-                //blk_Rooks += Convert.ToUInt64(b, 2);
+                moveList = GetRookMoves("", Convert.ToUInt64(b, 2), code);
                 break;
             case ('n'):
-                //blk_Knights += Convert.ToUInt64(b, 2);
+                moveList = GetKnightMoves("", Convert.ToUInt64(b, 2), code);
                 break;
             case ('b'):
-                //blk_Bishops += Convert.ToUInt64(b, 2);
+                moveList = GetBishopMoves("", Convert.ToUInt64(b, 2), code);
                 break;
             case ('p'):
                 moveList = GetBlackPawnMoves("", Convert.ToUInt64(b, 2), code);
                 break;
             case ('k'):
-                //blk_King += Convert.ToUInt64(b, 2);
+                moveList = GetKingMoves("", Convert.ToUInt64(b, 2), code);
                 break;
             case ('q'):
-                //blk_Queens += Convert.ToUInt64(b, 2);
+                moveList = GetRookMoves("", Convert.ToUInt64(b, 2), code);
+                moveList.AddRange(GetBishopMoves("", Convert.ToUInt64(b, 2), code));
                 break;
 
             case ('R'):
@@ -183,13 +184,44 @@ public class ChessBoard : MonoBehaviour
                 break;
         }
 
+        DrawBitboard(AVAILABLE_MOVES); //Show available moves
+        AVAILABLE_MOVES = 0; //Reset available moves
+    }
+
+    /*
+     * Used by the engine, collect all possible moves it can make
+     *  //string history, ulong wht_Pawns, ulong wht_Knights, ulong wht_Bishops, ulong wht_Rooks, ulong wht_King, ulong wht_Queens, ulong blk_King, ulong blk_Pawns, ulong blk_Knights, ulong blk_Bishops, ulong blk_Rooks, ulong blk_Queens
+     */
+    public List<Move> GetPossibleMovesWhite()
+    {
+        List<Move> moveList = new List<Move>();
+
+        return moveList;
+    }
+
+    /*
+     * string history, ulong blk_Pawns, ulong blk_Knights, ulong blk_Bishops, ulong blk_Rooks, ulong blk_King, ulong blk_Queens, ulong blk_King, ulong blk_Pawns, ulong blk_Knights, ulong blk_Bishops, ulong blk_Rooks, ulong blk_Queens
+     */
+    public List<Move> GetPossibleMovesBlack()
+    {
+        List<Move> moveList = new List<Move>();
+        
+        moveList = GetRookMoves("", blk_Rooks, 'r');
+        moveList.AddRange(GetKnightMoves("", blk_Knights, 'n'));
+        moveList.AddRange(GetBishopMoves("", blk_Bishops, 'b'));
+        moveList.AddRange(GetBlackPawnMoves("", blk_Pawns, 'p'));
+        moveList.AddRange(GetKingMoves("", blk_King, 'k'));
+
+        moveList.AddRange(GetRookMoves("", blk_Queens, 'q'));
+        moveList.AddRange(GetBishopMoves("", blk_Queens, 'q'));
+        
         foreach (Move m in moveList)
         {
             Debug.Log(m);
         }
 
-        DrawBitboard(AVAILABLE_MOVES); //Show available moves
         AVAILABLE_MOVES = 0; //Reset available moves
+        return moveList;
     }
 
     //Retrieve the bitboard value for all pieces
@@ -206,7 +238,6 @@ public class ChessBoard : MonoBehaviour
         //Debug.Log(DecimalToBitboard(OCCUPIED));
         
     }
-
 
     //rnbqkbnr/pppppppp/2/k
     public void FENtoChessBoard(string FEN)
@@ -354,17 +385,6 @@ public class ChessBoard : MonoBehaviour
         }
 
    
-    }
-
-
-    //string history, ulong wht_Pawns, ulong wht_Knights, ulong wht_Bishops, ulong wht_Rooks, ulong wht_King, ulong wht_Queens, ulong blk_King, ulong blk_Pawns, ulong blk_Knights, ulong blk_Bishops, ulong blk_Rooks, ulong blk_Queens
-    public string GetPossibleMovesWhite()
-    { 
-        string moveList = "";
-       // string moveList = GetWhitePawnMoves(history, wht_Pawns);
-
-        //DrawMoves(GetHorizontalVerticalMoves(9));
-        return moveList;
     }
 
     /*

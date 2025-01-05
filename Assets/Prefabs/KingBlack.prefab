@@ -60,6 +60,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 3662df2e221e0e84fa86ff3871624bc7, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: de141c6a79c00fd468b539893767dc6c, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 3662df2e221e0e84fa86ff3871624bc7, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: a07181b775dd55a41acf1e4e69fa6ba2, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 3662df2e221e0e84fa86ff3871624bc7, type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: e61f92b068957fd4caae9e21eee2f230, type: 2}
     - target: {fileID: 919132149155446097, guid: 3662df2e221e0e84fa86ff3871624bc7, type: 3}
       propertyPath: m_Name
       value: KingBlack

@@ -147,6 +147,13 @@ public class Game : MonoBehaviour
         board.PosToBitBoard(); //Updates the bitboards and positions
 
         gameAdvantage.UpdateAdvantage(evaluation.GetEvaluation());
+
+        ComputerMakeMove();
+    }
+
+    void ComputerMakeMove()
+    {
+        board.GetPossibleMovesBlack();
     }
 
     // Start is called before the first frame update
