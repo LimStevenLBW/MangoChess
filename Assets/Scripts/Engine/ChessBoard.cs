@@ -862,7 +862,7 @@ public class ChessBoard : MonoBehaviour
         List<Move> moveList = new List<Move>();
 
         //FORWARD-RIGHT
-        ulong nextMove = (knights << 17) & EMPTY_SQUARES & ~A_FILE;
+        ulong nextMove = (knights << 17) & (EMPTY_SQUARES | CAPTURABLE) & ~A_FILE;
         AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
@@ -877,7 +877,7 @@ public class ChessBoard : MonoBehaviour
         }
 
         //FORWARD-LEFT
-        nextMove = (knights << 15) & EMPTY_SQUARES & ~H_FILE;
+        nextMove = (knights << 15) & (EMPTY_SQUARES | CAPTURABLE) & ~H_FILE;
         AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
@@ -892,7 +892,7 @@ public class ChessBoard : MonoBehaviour
         }
 
         //LEFT-FORWARD
-        nextMove = (knights << 6) & EMPTY_SQUARES & ~H_FILE & ~G_FILE;
+        nextMove = (knights << 6) & (EMPTY_SQUARES | CAPTURABLE) & ~H_FILE & ~G_FILE;
         AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
@@ -907,7 +907,7 @@ public class ChessBoard : MonoBehaviour
         }
 
         //LEFT-BACKWARDS
-        nextMove = (knights >> 10) & EMPTY_SQUARES & ~H_FILE & ~G_FILE;
+        nextMove = (knights >> 10) & (EMPTY_SQUARES | CAPTURABLE) & ~H_FILE & ~G_FILE;
         AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
@@ -922,7 +922,7 @@ public class ChessBoard : MonoBehaviour
         }
 
         //RIGHT-FORWARD
-        nextMove = (knights << 10) & EMPTY_SQUARES & ~A_FILE & ~B_FILE;
+        nextMove = (knights << 10) & (EMPTY_SQUARES | CAPTURABLE) & ~A_FILE & ~B_FILE;
         AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
@@ -937,7 +937,7 @@ public class ChessBoard : MonoBehaviour
         }
 
         //RIGHT-BACKWARDS
-        nextMove = (knights >> 6) & EMPTY_SQUARES & ~A_FILE & ~B_FILE;
+        nextMove = (knights >> 6) & (EMPTY_SQUARES | CAPTURABLE) & ~A_FILE & ~B_FILE;
         AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
@@ -952,7 +952,7 @@ public class ChessBoard : MonoBehaviour
         }
 
         //BACKWARDS-LEFT
-        nextMove = (knights >> 17) & EMPTY_SQUARES & ~H_FILE;
+        nextMove = (knights >> 17) & (EMPTY_SQUARES | CAPTURABLE) & ~H_FILE;
         AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
@@ -967,7 +967,7 @@ public class ChessBoard : MonoBehaviour
         }
 
         //BACKWARDS-RIGHT
-        nextMove = (knights >> 15) & EMPTY_SQUARES & ~A_FILE;
+        nextMove = (knights >> 15) & (EMPTY_SQUARES | CAPTURABLE) & ~A_FILE;
         AVAILABLE_MOVES += nextMove;
         for (int j = 0; j < 64; j++) //Iterate through the bitboard
         {
