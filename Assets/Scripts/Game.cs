@@ -8,8 +8,11 @@ public class Game : MonoBehaviour
     public GameUI gameUI;
     public Side SideToMove = Side.White;
     public bool DEBUG_MODE;
+
+    public MoveCalculator mCalculator;
     public GameAdvantage gameAdvantage;
     public Evaluation evaluation;
+
     public enum Side
     {
         Undecided,
@@ -26,6 +29,8 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        mCalculator = new MoveCalculator();
+
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -117,20 +122,26 @@ public class Game : MonoBehaviour
         return selectedPiece;
     }
 
-    /*
-     * Makes a piece move from player input and updates the board
-     */
-    public void MakePlayerMove(Square destination)
+    private void SwapPlayerTurn()
     {
         if (SideToMove == Side.White) SideToMove = Side.Black;
         else if (SideToMove == Side.Black) SideToMove = Side.White;
         gameUI.ShowPlayerToMoveLabel(SideToMove);
 
+        if (playerSide != SideToMove) StartCoroutine(ComputerTakeTurn());
+    }
+
+    /*
+     * Makes a piece move from player input and updates the board
+     */
+    public void MakePlayerMove(Square destination)
+    {
         ClearAllSelections();
         Square formerSquare = selectedPiece.GetSquare();
         formerSquare.ClearReference();
 
         Piece capture = destination.GetCurrentPiece();
+
         if(capture == null)
         {
             
@@ -148,12 +159,36 @@ public class Game : MonoBehaviour
 
         gameAdvantage.UpdateAdvantage(evaluation.GetEvaluation());
 
-        ComputerMakeMove();
+        SwapPlayerTurn();
     }
 
-    void ComputerMakeMove()
+    IEnumerator ComputerTakeTurn()
     {
-        board.GetPossibleMovesBlack();
+
+        List<Move> moves = board.GetPossibleMovesBlack();
+
+        Move move = mCalculator.GetCalculation(moves);
+        yield return new WaitForSeconds(0.2f);
+
+        DoMove(move);
+    }
+
+    void DoMove(Move move)
+    {
+        Square start = board.GetSquareFromIndex(move.start);
+        Square end = board.GetSquareFromIndex(move.end);
+        Piece piece = start.GetCurrentPiece();
+        end.SetNewPiece(piece);
+
+        start.ClearReference();
+        piece.DisableOutline();
+        piece = null;
+
+        board.PosToBitBoard(); //Updates the bitboards and positions
+
+        gameAdvantage.UpdateAdvantage(evaluation.GetEvaluation());
+
+        SwapPlayerTurn();
     }
 
     // Start is called before the first frame update

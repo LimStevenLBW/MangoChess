@@ -7,38 +7,6 @@ public class ChessBoard : MonoBehaviour
 {
     public string initialFEN = "";
 
-    public struct Move
-    {
-        public Move(int s, int e, char piece, bool isCapture, bool passantCapture, bool isPromotion, char promotionPiece = ' ')
-        {
-            start = s;
-            end = e;
-            this.piece = piece;
-            this.isCapture = isCapture;
-            this.passantCapture = passantCapture;
-            this.isPromotion = isPromotion;
-            this.promotionPiece = promotionPiece;
-        }
-
-        public override string ToString() => $"start{start}, end{end}; {char.ToUpper(piece)}" + (isCapture ? "x" : "");
-
-        int start;       //origin and destination squares (0 - 63)
-        int end;
-        //Game.Side side;           
-
-        char piece;          //king=0, queens=2,rooks=4,knights=6,pawns=8
-        bool isCapture;
-        bool passantCapture;   //is this move a capture using en passant
-
-        //char captured_piece; //king=0, queens=2,rooks=4,bishops=6,pawns=8        
-        // bool canCastle_off[4];
-        // bool isCastle[4];
-        //char enPassant;         //if the pawn is pushed two places, set en passant square, along with the square the pawn is on for capture
-
-        bool isPromotion;
-        char promotionPiece;
-    }
-
     //Bitboards
     ulong blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_King, blk_Queens;
     ulong wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens;
@@ -214,11 +182,6 @@ public class ChessBoard : MonoBehaviour
 
         moveList.AddRange(GetRookMoves("", blk_Queens, 'q'));
         moveList.AddRange(GetBishopMoves("", blk_Queens, 'q'));
-        
-        foreach (Move m in moveList)
-        {
-            Debug.Log(m);
-        }
 
         AVAILABLE_MOVES = 0; //Reset available moves
         return moveList;
@@ -1134,6 +1097,26 @@ public class ChessBoard : MonoBehaviour
     public List<ChessBoardFile> GetFiles()
     {
         return file;
+    }
+
+    public Square GetSquareFromIndex(int i)
+    {
+        int loc = i;
+        for (int row = 0; row <= 7; row++)
+        {
+            for (int col = 0; col <= 7; col++)
+            {
+                if (loc == 0)
+                {
+                    return file[col].GetSquare(row);
+                }
+
+                loc--;
+            }
+        }
+
+        Debug.Log("Could not locate that square at " + i);
+        return null;
     }
 
     // Update is called once per frame

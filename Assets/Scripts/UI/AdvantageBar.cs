@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AdvantageBar : MonoBehaviour
 {
-    private float defaultScale = 0.5f;
+    private float defaultScale = 0.55f;
     
     //A value of 0 will set this to the default scale
     //A value of 10 or more should almost max the bar
