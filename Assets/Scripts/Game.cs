@@ -13,6 +13,9 @@ public class Game : MonoBehaviour
     public GameAdvantage gameAdvantage;
     public Evaluation evaluation;
 
+    private List<Move> moveHistory;
+    public AudioSFX sfx;
+
     public enum Side
     {
         Undecided,
@@ -30,6 +33,7 @@ public class Game : MonoBehaviour
     void Awake()
     {
         mCalculator = new MoveCalculator();
+        moveHistory = new List<Move>();
 
         if (instance != null && instance != this)
         {
@@ -136,6 +140,7 @@ public class Game : MonoBehaviour
      */
     public void MakePlayerMove(Square destination)
     {
+        
         ClearAllSelections();
         Square formerSquare = selectedPiece.GetSquare();
         formerSquare.ClearReference();
@@ -144,14 +149,18 @@ public class Game : MonoBehaviour
 
         if(capture == null)
         {
-            
+            sfx.PlayMoveSFX();
         }
         else
         {
+            sfx.PlayCaptureSFX();
             Debug.Log(capture);
         }
 
         destination.SetNewPiece(selectedPiece);
+        if (selectedPiece.GetCode() == 'k') board.DisableBlackCastling();
+        if (selectedPiece.GetCode() == 'K') board.DisableWhiteCastling();
+
         selectedPiece.DisableOutline();
         selectedPiece = null;
 
@@ -175,10 +184,17 @@ public class Game : MonoBehaviour
 
     void DoMove(Move move)
     {
+        sfx.PlayMoveSFX();
+
+        RecordMove(move);
         Square start = board.GetSquareFromIndex(move.start);
         Square end = board.GetSquareFromIndex(move.end);
         Piece piece = start.GetCurrentPiece();
         end.SetNewPiece(piece);
+
+        //King has moved
+        if (move.piece == 'k') board.DisableBlackCastling();
+        if (move.piece == 'K') board.DisableWhiteCastling();
 
         start.ClearReference();
         piece.DisableOutline();
@@ -189,6 +205,12 @@ public class Game : MonoBehaviour
         gameAdvantage.UpdateAdvantage(evaluation.GetEvaluation());
 
         SwapPlayerTurn();
+    }
+
+    void RecordMove(Move move)
+    {
+        moveHistory.Add(move);
+
     }
 
     // Start is called before the first frame update

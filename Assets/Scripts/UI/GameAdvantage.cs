@@ -14,9 +14,9 @@ public class GameAdvantage : MonoBehaviour
         white.UpdateDisplay(evaluation);
         black.UpdateDisplay(-evaluation);
 
-        string evalText;
-        if (evaluation >= 0) evalText = "+";
-        evalText = evaluation.ToString();
+        string evalText = "";
+        if (evaluation >= 0) evalText += "+";
+        evalText += evaluation.ToString("0.0"); // 1 decimal place only
         
         evalValue.SetText(evalText);
     }

@@ -81,7 +81,7 @@ public class Evaluation : MonoBehaviour
         #endregion
 
         //Pawn Material Value
-        float pMult = Math.Abs(1.7f - totalPieces * 0.3f); //0.3 -> 1.7 in pawn value when piece count gets low
+        float pMult = Math.Abs(1.7f - totalPieces * 0.1f); //0.3 -> 1.7 in pawn value when piece count gets low
         float bPawnsValue = bPawns * pMult;
         float wPawnsValue = wPawns * pMult;
 
@@ -105,18 +105,19 @@ public class Evaluation : MonoBehaviour
         float bQueensValue = bQueens * 9;
         float wQueensValue = wQueens * 9;
 
+        
+        //Debug.Log(wPawnsValue);
+        //Debug.Log(bPawnsValue);
         /*
-        Debug.Log(wPawnsValue);
         Debug.Log(wKnightsValue);
         Debug.Log(wBishopsValue);
         Debug.Log(wRooksValue);
         Debug.Log(wQueensValue);
         */
- 
+
         eval = (wPawnsValue + wBishopsValue + wKnightsValue + wRooksValue + wQueensValue) 
             - (bPawnsValue + bBishopsValue + bKnightsValue + bRooksValue + bQueensValue);
 
-        Debug.Log(eval);
         return eval;
     }
 

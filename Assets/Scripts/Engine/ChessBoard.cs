@@ -5,6 +5,17 @@ using UnityEngine;
 
 public class ChessBoard : MonoBehaviour
 {
+    //Castling Rights
+    private bool whtCanQueenSideCastle = true;
+    private bool whtCanKingSideCastle = true;
+    private bool blkCanQueenSideCastle = true;
+    private bool blkCanKingSideCastle = true;
+
+    static ulong bKingRook = 9223372036854775808;
+    static ulong bQueenRook = 72057594037927936;
+    static ulong wKingRook = 128;
+    static ulong wQueenRook = 1;
+
     public string initialFEN = "";
 
     //Bitboards
@@ -163,7 +174,7 @@ public class ChessBoard : MonoBehaviour
     public List<Move> GetPossibleMovesWhite()
     {
         List<Move> moveList = new List<Move>();
-
+        //CanWhiteCastle();
         return moveList;
     }
 
@@ -173,7 +184,8 @@ public class ChessBoard : MonoBehaviour
     public List<Move> GetPossibleMovesBlack()
     {
         List<Move> moveList = new List<Move>();
-        
+
+        CanBlackCastle();
         moveList = GetRookMoves("", blk_Rooks, 'r');
         moveList.AddRange(GetKnightMoves("", blk_Knights, 'n'));
         moveList.AddRange(GetBishopMoves("", blk_Bishops, 'b'));
@@ -187,7 +199,7 @@ public class ChessBoard : MonoBehaviour
         return moveList;
     }
 
-    //Retrieve the bitboard value for all pieces
+    //Retrieve the bitboard value for all piecesA
     public void UpdateBitBoards()
     {
         WHT_CANT_CAPTURE = ~(wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens | blk_King);
@@ -196,7 +208,7 @@ public class ChessBoard : MonoBehaviour
         EMPTY_SQUARES = ~(blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens | wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens);
 
         OCCUPIED = BLK_PIECES | WHT_PIECES;
-        //Debug.Log("ulong All Pieces: " + OCCUPIED);
+        Debug.Log("BITBOARD OCCUPIED SQUARES: " + OCCUPIED);
 
         //Debug.Log(DecimalToBitboard(OCCUPIED));
         
@@ -350,123 +362,146 @@ public class ChessBoard : MonoBehaviour
    
     }
 
-    /*
-     * WHITE PAWN, Enpassant and promotion incomplete
-     */
-    public List<Move> GetWhitePawnMoves(string history, ulong wht_Pawns, char code)
-    {
-        List<Move> moveList = new List<Move>();
-
-        //RIGHT CAPTURE
-        //All pieces that a pawn can capture to the right if that piece is not on Rank8(promotion) or A File(can't right capture)
-        ulong PAWN_MOVES = (wht_Pawns << 9) & BLK_PIECES & ~RANK_8 & ~A_FILE;
-        AVAILABLE_MOVES += PAWN_MOVES;
-        for (int i = 0; i < 64; i++) //Iterate through the bitboard
-        {
-            if (((PAWN_MOVES >> i) & 1) == 1) //if the bit is active
-            {
-                Move m = new Move(i - 9, i, code, true, false, false);
-                moveList.Add(m);
-            }
-        }
-
-        //LEFT CAPTURE
-        PAWN_MOVES = (wht_Pawns << 7) & BLK_PIECES & ~RANK_8 & ~H_FILE;
-        AVAILABLE_MOVES += PAWN_MOVES;
-        for (int i = 0; i < 64; i++) //Iterate through the bitboard, possibly optimize using trailing zeros calculation instead
-        {
-            if (((PAWN_MOVES >> i) & 1) == 1) // moveList += "" + (i / 8 + 1) + (i % 8 + 1) + (i / 8) + (i % 8);
-            {
-                Move m = new Move(i - 7, i, code, true, false, false);
-                moveList.Add(m);   
-            }
-
-        }
-
-        //FORWARD MOVE ONCE
-        //----- Forward Moves, if square is empty -----
-        PAWN_MOVES = (wht_Pawns << 8) & EMPTY_SQUARES & ~RANK_8;
-        AVAILABLE_MOVES += PAWN_MOVES;
-        for (int i = 0; i < 64; i++)
-        {
-            if (((PAWN_MOVES >> i) & 1) == 1)
-            {
-                int start = (i - 8);
-                int end = (i);
-                Move m = new Move(start, end, code, false, false, false);
-                moveList.Add(m);
-                //moveList += " / " + (i / 8 + 1) + " / " + (i % 8) + " / " + (i / 8) + " / " + (i % 8);
-            }
-        }
-
-        //----- Double Move Forward -----
-        PAWN_MOVES = (wht_Pawns << 16) & EMPTY_SQUARES & (EMPTY_SQUARES << 8) & RANK_4;
-        AVAILABLE_MOVES += PAWN_MOVES;
-        // DrawBitboard(PAWN_MOVES);
-        for (int i = 0; i < 64; i++)
-        {
-            if (((PAWN_MOVES >> i) & 1) == 1)
-            {
-                int start = (i - 16);
-                int end = (i);
-                Move m = new Move(start, end, code, false, false, false);
-                moveList.Add(m);
-            }      
-        }
-         
-        /*
-        
-         //Promotion
-         PAWN_MOVES = (wht_Pawns >> 7) & BLK_PIECES & RANK_8 & ~A_FILE; //Promote by right capture
-         for (int i = 0; i < 64; i++)
-         {
-             if (((PAWN_MOVES >> i) & 1) == 1)
-                 moveList += "" + (i % 8 - 1) + (i % 8) + "QP" + (i % 8 - 1) + (i % 8) + "RP" + (i % 8 - 1) + (i % 8) + "BP" + (i % 8 - 1) + (i % 8) + "KP";
-
-         }
-
-         PAWN_MOVES = (wht_Pawns >> 9) & BLK_PIECES & RANK_8 & ~H_FILE; //Promote by left capture
-         for (int i = 0; i < 64; i++)
-         {
-             if (((PAWN_MOVES >> i) & 1) == 1)
-                 moveList += "" + (i % 8 + 1) + (i % 8) + "QP" + (i % 8 + 1) + (i % 8) + "RP" + (i % 8 + 1) + (i % 8) + "BP" + (i % 8 + 1) + (i % 8) + "KP";
-
-         }
-
-         PAWN_MOVES = (wht_Pawns >> 9) & EMPTY_SQUARES & RANK_8; //Promote by forward movement
-         for (int i = 0; i < 64; i++)
-         {
-             if (((PAWN_MOVES >> i) & 1) == 1)
-                 moveList += "" + (i % 8) + (i % 8) + "QP" + (i % 8) + (i % 8) + "RP" + (i % 8) + (i % 8) + "BP" + (i % 8) + (i % 8) + "KP";
-
-         }
-         
-        //Checking for en passant, need to know prior moves
-        if (history.Length >= 4)
-        {
-            //Checks if the last move was a double forward movement
-            if (history[history.Length - 1] == history[history.Length - 3]
-                && Math.Abs(history[history.Length - 2] - history[history.Length - 4]) == 2)
-            {
-                PAWN_MOVES = (wht_Pawns << 1) & BLK_PIECES & RANK_5 & ~A_FILE;
-                // PAWN_MOVES = PAWN_MOVES & ~(PAWN_MOVES - 1);
-                for (int i = 0; i < 64; i++) //Capture Right En Passant
-                {
-                    if (((PAWN_MOVES >> i) & 1) == 1)
-                        moveList += "" + (i % 8 - 1) + (i % 8) + " E";
-                }
-
-                PAWN_MOVES = (wht_Pawns >> 1) & BLK_PIECES & RANK_5 & ~H_FILE;
-                for (int i = 0; i < 64; i++) //Capture Left En Passant
-                {
-                    if (((PAWN_MOVES >> i) & 1) == 1)
-                        moveList += "" + (i % 8 + 1) + (i % 8) + " E";
-                }
-            }
-        } */
-
-        return moveList;
+    void CanBlackCastle()
+    {   //There was a change in rook position
+        if ((blk_Rooks | bKingRook) != blk_Rooks) blkCanKingSideCastle = false;
+        if ((blk_Rooks & bQueenRook) != blk_Rooks) blkCanQueenSideCastle = false;
     }
+
+    void CanWhiteCastle()
+    {
+        if ((wht_Rooks | wKingRook) != wht_Rooks) whtCanKingSideCastle = false;
+        if ((wht_Rooks & wQueenRook) != wht_Rooks) whtCanQueenSideCastle = false;
+    }
+
+    public void DisableWhiteCastling()
+    {
+        whtCanKingSideCastle = false;
+        whtCanQueenSideCastle = false;
+    }
+    public void DisableBlackCastling()
+    {
+        blkCanKingSideCastle = false;
+        blkCanQueenSideCastle = false;
+    }
+
+    /*
+        * WHITE PAWN, Enpassant and promotion incomplete
+        */
+    public List<Move> GetWhitePawnMoves(string history, ulong wht_Pawns, char code)
+{
+    List<Move> moveList = new List<Move>();
+
+    //RIGHT CAPTURE
+    //All pieces that a pawn can capture to the right if that piece is not on Rank8(promotion) or A File(can't right capture)
+    ulong PAWN_MOVES = (wht_Pawns << 9) & BLK_PIECES & ~RANK_8 & ~A_FILE;
+    AVAILABLE_MOVES += PAWN_MOVES;
+    for (int i = 0; i < 64; i++) //Iterate through the bitboard
+    {
+        if (((PAWN_MOVES >> i) & 1) == 1) //if the bit is active
+        {
+            Move m = new Move(i - 9, i, code, true, false, false);
+            moveList.Add(m);
+        }
+    }
+
+    //LEFT CAPTURE
+    PAWN_MOVES = (wht_Pawns << 7) & BLK_PIECES & ~RANK_8 & ~H_FILE;
+    AVAILABLE_MOVES += PAWN_MOVES;
+    for (int i = 0; i < 64; i++) //Iterate through the bitboard, possibly optimize using trailing zeros calculation instead
+    {
+        if (((PAWN_MOVES >> i) & 1) == 1) // moveList += "" + (i / 8 + 1) + (i % 8 + 1) + (i / 8) + (i % 8);
+        {
+            Move m = new Move(i - 7, i, code, true, false, false);
+            moveList.Add(m);   
+        }
+
+    }
+
+    //FORWARD MOVE ONCE
+    //----- Forward Moves, if square is empty -----
+    PAWN_MOVES = (wht_Pawns << 8) & EMPTY_SQUARES & ~RANK_8;
+    AVAILABLE_MOVES += PAWN_MOVES;
+    for (int i = 0; i < 64; i++)
+    {
+        if (((PAWN_MOVES >> i) & 1) == 1)
+        {
+            int start = (i - 8);
+            int end = (i);
+            Move m = new Move(start, end, code, false, false, false);
+            moveList.Add(m);
+            //moveList += " / " + (i / 8 + 1) + " / " + (i % 8) + " / " + (i / 8) + " / " + (i % 8);
+        }
+    }
+
+    //----- Double Move Forward -----
+    PAWN_MOVES = (wht_Pawns << 16) & EMPTY_SQUARES & (EMPTY_SQUARES << 8) & RANK_4;
+    AVAILABLE_MOVES += PAWN_MOVES;
+    // DrawBitboard(PAWN_MOVES);
+    for (int i = 0; i < 64; i++)
+    {
+        if (((PAWN_MOVES >> i) & 1) == 1)
+        {
+            int start = (i - 16);
+            int end = (i);
+            Move m = new Move(start, end, code, false, false, false);
+            moveList.Add(m);
+        }      
+    }
+         
+    /*
+        
+        //Promotion
+        PAWN_MOVES = (wht_Pawns >> 7) & BLK_PIECES & RANK_8 & ~A_FILE; //Promote by right capture
+        for (int i = 0; i < 64; i++)
+        {
+            if (((PAWN_MOVES >> i) & 1) == 1)
+                moveList += "" + (i % 8 - 1) + (i % 8) + "QP" + (i % 8 - 1) + (i % 8) + "RP" + (i % 8 - 1) + (i % 8) + "BP" + (i % 8 - 1) + (i % 8) + "KP";
+
+        }
+
+        PAWN_MOVES = (wht_Pawns >> 9) & BLK_PIECES & RANK_8 & ~H_FILE; //Promote by left capture
+        for (int i = 0; i < 64; i++)
+        {
+            if (((PAWN_MOVES >> i) & 1) == 1)
+                moveList += "" + (i % 8 + 1) + (i % 8) + "QP" + (i % 8 + 1) + (i % 8) + "RP" + (i % 8 + 1) + (i % 8) + "BP" + (i % 8 + 1) + (i % 8) + "KP";
+
+        }
+
+        PAWN_MOVES = (wht_Pawns >> 9) & EMPTY_SQUARES & RANK_8; //Promote by forward movement
+        for (int i = 0; i < 64; i++)
+        {
+            if (((PAWN_MOVES >> i) & 1) == 1)
+                moveList += "" + (i % 8) + (i % 8) + "QP" + (i % 8) + (i % 8) + "RP" + (i % 8) + (i % 8) + "BP" + (i % 8) + (i % 8) + "KP";
+
+        }
+         
+    //Checking for en passant, need to know prior moves
+    if (history.Length >= 4)
+    {
+        //Checks if the last move was a double forward movement
+        if (history[history.Length - 1] == history[history.Length - 3]
+            && Math.Abs(history[history.Length - 2] - history[history.Length - 4]) == 2)
+        {
+            PAWN_MOVES = (wht_Pawns << 1) & BLK_PIECES & RANK_5 & ~A_FILE;
+            // PAWN_MOVES = PAWN_MOVES & ~(PAWN_MOVES - 1);
+            for (int i = 0; i < 64; i++) //Capture Right En Passant
+            {
+                if (((PAWN_MOVES >> i) & 1) == 1)
+                    moveList += "" + (i % 8 - 1) + (i % 8) + " E";
+            }
+
+            PAWN_MOVES = (wht_Pawns >> 1) & BLK_PIECES & RANK_5 & ~H_FILE;
+            for (int i = 0; i < 64; i++) //Capture Left En Passant
+            {
+                if (((PAWN_MOVES >> i) & 1) == 1)
+                    moveList += "" + (i % 8 + 1) + (i % 8) + " E";
+            }
+        }
+    } */
+
+    return moveList;
+}
 
     /*
      * BLACK PAWN, Enpassant and promotion incomplete
