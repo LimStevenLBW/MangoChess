@@ -374,12 +374,28 @@ public class ChessBoard : MonoBehaviour
         if ((wht_Rooks & wQueenRook) != wht_Rooks) whtCanQueenSideCastle = false;
     }
 
-    public void DisableWhiteCastling()
+    public void HandleWhiteCastling(int kingLocation)
     {
+        if (!whtCanKingSideCastle || !whtCanQueenSideCastle) return;
         whtCanKingSideCastle = false;
         whtCanQueenSideCastle = false;
+
+        if(kingLocation == 6) //King-Side Castle
+        {
+            Square rookSqr = GetSquareFromIndex(7);
+            Square nxtRookSqr = GetSquareFromIndex(5);
+            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
+            rookSqr.ClearReference();
+        }
+        if(kingLocation == 1)
+        {
+            Square rookSqr = GetSquareFromIndex(0);
+            Square nxtRookSqr = GetSquareFromIndex(2);
+            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
+            rookSqr.ClearReference();
+        }
     }
-    public void DisableBlackCastling()
+    public void HandleBlackCastling(int kingLocation)
     {
         blkCanKingSideCastle = false;
         blkCanQueenSideCastle = false;
@@ -400,7 +416,7 @@ public class ChessBoard : MonoBehaviour
     {
         if (((PAWN_MOVES >> i) & 1) == 1) //if the bit is active
         {
-            Move m = new Move(i - 9, i, code, true, false, false);
+            Move m = new Move(i - 9, i, code, true, false, false, false);
             moveList.Add(m);
         }
     }
@@ -412,7 +428,7 @@ public class ChessBoard : MonoBehaviour
     {
         if (((PAWN_MOVES >> i) & 1) == 1) // moveList += "" + (i / 8 + 1) + (i % 8 + 1) + (i / 8) + (i % 8);
         {
-            Move m = new Move(i - 7, i, code, true, false, false);
+            Move m = new Move(i - 7, i, code, true, false, false, false);
             moveList.Add(m);   
         }
 
@@ -428,7 +444,7 @@ public class ChessBoard : MonoBehaviour
         {
             int start = (i - 8);
             int end = (i);
-            Move m = new Move(start, end, code, false, false, false);
+            Move m = new Move(start, end, code, false, false, false, false);
             moveList.Add(m);
             //moveList += " / " + (i / 8 + 1) + " / " + (i % 8) + " / " + (i / 8) + " / " + (i % 8);
         }
@@ -444,7 +460,7 @@ public class ChessBoard : MonoBehaviour
         {
             int start = (i - 16);
             int end = (i);
-            Move m = new Move(start, end, code, false, false, false);
+            Move m = new Move(start, end, code, false, false, false, false);
             moveList.Add(m);
         }      
     }
@@ -517,7 +533,7 @@ public class ChessBoard : MonoBehaviour
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
-                Move m = new Move(i + 9, i, code, true, false, false);
+                Move m = new Move(i + 9, i, code, true, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -529,7 +545,7 @@ public class ChessBoard : MonoBehaviour
         {
             if (((PAWN_MOVES >> i) & 1) == 1)         
             {
-                Move m = new Move(i+7, i, code, true, false, false);
+                Move m = new Move(i+7, i, code, true, false, false, false);
                 moveList.Add(m);
             }
 
@@ -542,7 +558,7 @@ public class ChessBoard : MonoBehaviour
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
-                Move m = new Move(i+8, i, code, false, false, false);
+                Move m = new Move(i+8, i, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -554,7 +570,7 @@ public class ChessBoard : MonoBehaviour
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
-                Move m = new Move(i+16, i, code, false, false, false);
+                Move m = new Move(i+16, i, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -644,7 +660,7 @@ public class ChessBoard : MonoBehaviour
             {
                 if (((nextMove >> j) & 1) == 1)
                 {
-                    Move m = new Move(j - offset, j, code, isCapture, false, false);
+                    Move m = new Move(j - offset, j, code, isCapture, false, false, false);
                     moveList.Add(m);    
                 }
             }
@@ -676,7 +692,7 @@ public class ChessBoard : MonoBehaviour
                         int start = j + offset;
                         int end = j;   
 
-                        Move m = new Move(start, end, code, isCapture, false, false);
+                        Move m = new Move(start, end, code, isCapture, false, false, false);
                         moveList.Add(m);
                     }
                 }
@@ -707,7 +723,7 @@ public class ChessBoard : MonoBehaviour
                     int start = j + offset;
                     int end = j;
 
-                    Move m = new Move(start, end, code, isCapture, false, false);
+                    Move m = new Move(start, end, code, isCapture, false, false, false);
                     moveList.Add(m);
                 }
             }
@@ -740,7 +756,7 @@ public class ChessBoard : MonoBehaviour
                     int start = j - offset;
                     int end = j;
 
-                    Move m = new Move(start, end, code, false, false, false);
+                    Move m = new Move(start, end, code, false, false, false, false);
                     moveList.Add(m);
                 }
             }
@@ -783,7 +799,7 @@ public class ChessBoard : MonoBehaviour
                     int start = j - 8 * offset - offset;
                     int end = j;
 
-                    Move m = new Move(start, end, code, false, false, false);
+                    Move m = new Move(start, end, code, false, false, false, false);
                     moveList.Add(m);
                 }
             }
@@ -814,7 +830,7 @@ public class ChessBoard : MonoBehaviour
                     int start = j - 8 * offset + offset;
                     int end = j;
 
-                    Move m = new Move(start, end, code, false, false, false);
+                    Move m = new Move(start, end, code, false, false, false, false);
                     moveList.Add(m);
                 }
             }
@@ -845,7 +861,7 @@ public class ChessBoard : MonoBehaviour
                    int start = j + 8 * offset - offset;
                    int end = j;
 
-                   Move m = new Move(start, end, code, false, false, false);
+                   Move m = new Move(start, end, code, false, false, false, false);
                    moveList.Add(m);
                }
            }
@@ -877,7 +893,7 @@ public class ChessBoard : MonoBehaviour
                    int start = j + 8 * offset + offset;
                    int end = j;
 
-                   Move m = new Move(start, end, code, false, false, false);
+                   Move m = new Move(start, end, code, false, false, false, false);
                    moveList.Add(m);
                }
            }
@@ -906,7 +922,7 @@ public class ChessBoard : MonoBehaviour
                 int start = j - 17;
                 int end = j;
 
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, end, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -921,7 +937,7 @@ public class ChessBoard : MonoBehaviour
                 int start = j - 15;
                 int end = j;
 
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, end, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -936,7 +952,7 @@ public class ChessBoard : MonoBehaviour
                 int start = j - 6;
                 int end = j;
 
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, end, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -951,7 +967,7 @@ public class ChessBoard : MonoBehaviour
                 int start = j + 10;
                 int end = j;
 
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, end, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -966,7 +982,7 @@ public class ChessBoard : MonoBehaviour
                 int start = j - 10;
                 int end = j;
 
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, end, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -981,7 +997,7 @@ public class ChessBoard : MonoBehaviour
                 int start = j + 6;
                 int end = j;
 
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, end, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -996,7 +1012,7 @@ public class ChessBoard : MonoBehaviour
                 int start = j + 17;
                 int end = j;
 
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, end, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -1011,7 +1027,7 @@ public class ChessBoard : MonoBehaviour
                 int start = j + 15;
                 int end = j;
 
-                Move m = new Move(start, end, code, false, false, false);
+                Move m = new Move(start, end, code, false, false, false, false);
                 moveList.Add(m);
             }
         }
@@ -1029,9 +1045,38 @@ public class ChessBoard : MonoBehaviour
         else FRIENDLY = BLK_PIECES;
 
         List<Move> moveList = new List<Move>();
+        // whtCanQueenSideCastle = true;
+        // whtCanKingSideCastle = true;
+
+        ulong KING_MOVES = 0;
+        int start = -1; //fix later
+
+        //Castling Check
+        if (char.IsUpper(code)) //White
+        {
+            //PAWN_MOVES = (wht_Pawns << 16) & EMPTY_SQUARES & (EMPTY_SQUARES << 8) & RANK_4;
+            if (whtCanKingSideCastle) KING_MOVES += (king << 2) & EMPTY_SQUARES & (EMPTY_SQUARES << 1);
+            if (whtCanQueenSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1);  
+        }
+        else
+        {
+            if (blkCanKingSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1);
+            if (blkCanQueenSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1);
+        }
+
+        for (int i = 0; i < 64; i++) 
+        {
+            if (((KING_MOVES >> i) & 1) == 1)
+            {
+                if (start == -1) start = i + 9;
+                int end = (i);
+                Move m = new Move(start, i, code, false, true, false, false);
+                moveList.Add(m);
+            }
+        }
 
         //8 Way Movement Check
-        ulong KING_MOVES = (king << 8) & ~FRIENDLY; // Forward
+        KING_MOVES += (king << 8) & ~FRIENDLY; // Forward
         KING_MOVES += (king << 7) & ~FRIENDLY & ~H_FILE; //Top-Left
         KING_MOVES += (king << 9) & ~FRIENDLY & ~A_FILE; //Top-Right
 
@@ -1041,7 +1086,7 @@ public class ChessBoard : MonoBehaviour
         KING_MOVES += (king >> 8) & ~FRIENDLY; //Backwards
         KING_MOVES += (king >> 7) & ~FRIENDLY & ~A_FILE; //Bottom-Right
         KING_MOVES += (king >> 9) & ~FRIENDLY & ~H_FILE; //Bottom-Left
-        int start = -1; //fix later
+
 
         AVAILABLE_MOVES += KING_MOVES;
         for (int i = 0; i < 64; i++) //will need a helper method for trailing zero counting
@@ -1050,7 +1095,7 @@ public class ChessBoard : MonoBehaviour
             {
                 if (start == -1) start = i + 9;
                 int end = (i);
-                Move m = new Move(start, i, code, false, false, false);
+                Move m = new Move(start, i, code, false, false, false, false);
                 moveList.Add(m);
             }
         }

@@ -140,7 +140,6 @@ public class Game : MonoBehaviour
      */
     public void MakePlayerMove(Square destination)
     {
-        
         ClearAllSelections();
         Square formerSquare = selectedPiece.GetSquare();
         formerSquare.ClearReference();
@@ -157,9 +156,10 @@ public class Game : MonoBehaviour
             Debug.Log(capture);
         }
 
+        if (selectedPiece.GetCode() == 'k') board.HandleBlackCastling(destination.GetID());
+        if (selectedPiece.GetCode() == 'K') board.HandleWhiteCastling(destination.GetID());
         destination.SetNewPiece(selectedPiece);
-        if (selectedPiece.GetCode() == 'k') board.DisableBlackCastling();
-        if (selectedPiece.GetCode() == 'K') board.DisableWhiteCastling();
+
 
         selectedPiece.DisableOutline();
         selectedPiece = null;
@@ -177,7 +177,9 @@ public class Game : MonoBehaviour
         List<Move> moves = board.GetPossibleMovesBlack();
 
         Move move = mCalculator.GetCalculation(moves);
-        yield return new WaitForSeconds(0.2f);
+        System.Random r = new System.Random();
+        float num = (float) (r.NextDouble() * 1.5f);
+        yield return new WaitForSeconds(num);
 
         DoMove(move);
     }
@@ -193,8 +195,8 @@ public class Game : MonoBehaviour
         end.SetNewPiece(piece);
 
         //King has moved
-        if (move.piece == 'k') board.DisableBlackCastling();
-        if (move.piece == 'K') board.DisableWhiteCastling();
+        if (move.piece == 'k') board.HandleBlackCastling(0);
+        if (move.piece == 'K') board.HandleWhiteCastling(0);
 
         start.ClearReference();
         piece.DisableOutline();

@@ -25163,7 +25163,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.7
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -25274,8 +25274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37cc6574a4064254888ce1953df2ba44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSFX: {fileID: 0}
-  captureSFX: {fileID: 0}
+  moveSFX: {fileID: 8300000, guid: 12000e4399b9070478ea5c5dba508f97, type: 3}
+  captureSFX: {fileID: 8300000, guid: f33743d7133119b42847ac22dccac47c, type: 3}
 --- !u!1001 &1027952896
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38383,7 +38383,7 @@ MonoBehaviour:
   DEBUG_MODE: 1
   gameAdvantage: {fileID: 22414262}
   evaluation: {fileID: 987619975}
-  sfx: {fileID: 0}
+  sfx: {fileID: 1026302601}
 --- !u!4 &1578266544
 Transform:
   m_ObjectHideFlags: 0
@@ -53056,7 +53056,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 8496505f2ffef014ea28d789e41ad3c2, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.7
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
