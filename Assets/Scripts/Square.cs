@@ -35,6 +35,10 @@ public class Square : MonoBehaviour
         {
             Game.Instance.MakePlayerMove(this);
         }
+        else if(Input.GetMouseButtonDown(0)) //On any other square
+        {
+            Game.Instance.ClearAllSelections();
+        }
     }
 
     void OnMouseExit()

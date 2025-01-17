@@ -12,7 +12,7 @@ public struct Move
         this.promotionPiece = promotionPiece;
     }
 
-    public override string ToString() => $"start{start}, end{end}; {char.ToUpper(piece)}" + (isCapture ? "x" : "");
+    public override string ToString() => $"start{start}, end{end}; {char.ToUpper(piece)}" + (isCapture ? "x" : "" + (isCastle ? "Castle" : ""));
 
     public int start;       //origin and destination squares (0 - 63)
     public int end;

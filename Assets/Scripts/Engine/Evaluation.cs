@@ -3,13 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Evaluation : MonoBehaviour
+public class Evaluation
 {
     private float whiteRating;
     private float blackRating;
 
     public ChessBoard board;
     private List<ChessBoardFile> files;
+
+    public Evaluation(ChessBoard board)
+    {
+        this.board = board;
+    }
 
     public float GetEvaluation()
     {

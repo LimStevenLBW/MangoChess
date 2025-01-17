@@ -11,8 +11,8 @@ public class Game : MonoBehaviour
 
     public MoveCalculator mCalculator;
     public GameAdvantage gameAdvantage;
-    public Evaluation evaluation;
 
+    private Evaluation evaluator;
     private List<Move> moveHistory;
     public AudioSFX sfx;
 
@@ -32,8 +32,10 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        mCalculator = new MoveCalculator();
+        evaluator = new Evaluation(board);
+        mCalculator = new MoveCalculator(evaluator, board);
         moveHistory = new List<Move>();
+
 
         if (instance != null && instance != this)
         {
@@ -70,6 +72,8 @@ public class Game : MonoBehaviour
         gameUI.ShowHud();
         playerSide = Side.Black;
         gameUI.ShowPlayerToMoveLabel(playerSide);
+
+        StartCoroutine(ComputerTakeTurn());
     }
 
     public void ClearAllSelections()
@@ -140,6 +144,8 @@ public class Game : MonoBehaviour
      */
     public void MakePlayerMove(Square destination)
     {
+        if (playerSide != SideToMove) return;
+
         ClearAllSelections();
         Square formerSquare = selectedPiece.GetSquare();
         formerSquare.ClearReference();
@@ -166,20 +172,23 @@ public class Game : MonoBehaviour
 
         board.PosToBitBoard(); //Updates the bitboards and positions
 
-        gameAdvantage.UpdateAdvantage(evaluation.GetEvaluation());
+        gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation());
 
         SwapPlayerTurn();
     }
 
     IEnumerator ComputerTakeTurn()
     {
-
-        List<Move> moves = board.GetPossibleMovesBlack();
-
-        Move move = mCalculator.GetCalculation(moves);
         System.Random r = new System.Random();
-        float num = (float) (r.NextDouble() * 1.5f);
+        float num = (float)(r.NextDouble() + 0.5f);
         yield return new WaitForSeconds(num);
+
+        List<Move> moves = new List<Move>();
+        if (SideToMove == Side.Black) moves = board.GetPossibleMovesBlack();
+        if (SideToMove == Side.White) moves = board.GetPossibleMovesWhite();
+
+        Move move = mCalculator.GetRandomMove(moves);
+        Debug.Log("CPU did" + move.ToString());
 
         DoMove(move);
     }
@@ -204,7 +213,7 @@ public class Game : MonoBehaviour
 
         board.PosToBitBoard(); //Updates the bitboards and positions
 
-        gameAdvantage.UpdateAdvantage(evaluation.GetEvaluation());
+        gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation());
 
         SwapPlayerTurn();
     }

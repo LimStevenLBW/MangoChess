@@ -173,8 +173,22 @@ public class ChessBoard : MonoBehaviour
      */
     public List<Move> GetPossibleMovesWhite()
     {
-        List<Move> moveList = new List<Move>();
-        //CanWhiteCastle();
+        CanWhiteCastle();
+
+        List<Move> moveList = GetRookMoves("", wht_Rooks, 'R');
+        moveList.AddRange(GetKnightMoves("", wht_Knights, 'N'));
+        moveList.AddRange(GetBishopMoves("", wht_Bishops, 'B'));
+        moveList.AddRange(GetWhitePawnMoves("", wht_Pawns, 'P'));
+        moveList.AddRange(GetKingMoves("", wht_King, 'K'));
+
+        moveList.AddRange(GetRookMoves("", wht_Queens, 'Q'));
+        moveList.AddRange(GetBishopMoves("", wht_Queens, 'Q'));
+
+        foreach(Move move in moveList)
+        {
+            Debug.Log(move.ToString());
+        }
+        AVAILABLE_MOVES = 0; //Reset available moves
         return moveList;
     }
 
@@ -183,10 +197,8 @@ public class ChessBoard : MonoBehaviour
      */
     public List<Move> GetPossibleMovesBlack()
     {
-        List<Move> moveList = new List<Move>();
-
         CanBlackCastle();
-        moveList = GetRookMoves("", blk_Rooks, 'r');
+        List<Move> moveList = GetRookMoves("", blk_Rooks, 'r');
         moveList.AddRange(GetKnightMoves("", blk_Knights, 'n'));
         moveList.AddRange(GetBishopMoves("", blk_Bishops, 'b'));
         moveList.AddRange(GetBlackPawnMoves("", blk_Pawns, 'p'));
@@ -387,18 +399,34 @@ public class ChessBoard : MonoBehaviour
             nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
             rookSqr.ClearReference();
         }
-        if(kingLocation == 1)
+        if(kingLocation == 2)
         {
             Square rookSqr = GetSquareFromIndex(0);
-            Square nxtRookSqr = GetSquareFromIndex(2);
+            Square nxtRookSqr = GetSquareFromIndex(3);
             nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
             rookSqr.ClearReference();
         }
     }
     public void HandleBlackCastling(int kingLocation)
     {
+        if (!blkCanKingSideCastle || !blkCanQueenSideCastle) return;
         blkCanKingSideCastle = false;
         blkCanQueenSideCastle = false;
+
+        if (kingLocation == 62) //King-Side Castle
+        {
+            Square rookSqr = GetSquareFromIndex(64);
+            Square nxtRookSqr = GetSquareFromIndex(61);
+            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
+            rookSqr.ClearReference();
+        }
+        if (kingLocation == 58)
+        {
+            Square rookSqr = GetSquareFromIndex(56);
+            Square nxtRookSqr = GetSquareFromIndex(59);
+            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
+            rookSqr.ClearReference();
+        }
     }
 
     /*
@@ -1060,7 +1088,7 @@ public class ChessBoard : MonoBehaviour
         }
         else
         {
-            if (blkCanKingSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1);
+            if (blkCanKingSideCastle) KING_MOVES += (king << 2) & EMPTY_SQUARES & (EMPTY_SQUARES << 1);
             if (blkCanQueenSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1);
         }
 
