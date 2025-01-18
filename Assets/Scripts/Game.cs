@@ -188,7 +188,7 @@ public class Game : MonoBehaviour
         if (SideToMove == Side.White) moves = board.GetPossibleMovesWhite();
 
         Move move = mCalculator.GetRandomMove(moves);
-        Debug.Log("CPU did" + move.ToString());
+        Debug.Log("CPU did " + move.ToString());
 
         DoMove(move);
     }
