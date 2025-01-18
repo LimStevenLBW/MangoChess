@@ -51,7 +51,7 @@ public class MoveCalculator
         if (side) moves = board.GetPossibleMovesWhite();
         else if(!side) moves = board.GetPossibleMovesBlack();
 
-        //Check for game over status?
+        //Check for game over status?/ Checks
 
         foreach (Move m in moves)
         {

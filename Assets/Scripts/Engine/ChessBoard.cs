@@ -18,10 +18,6 @@ public class ChessBoard : MonoBehaviour
 
     public string initialFEN = "";
 
-    //Bitboards
-    ulong blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_King, blk_Queens;
-    ulong wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens;
-
     //Edge Files
     static ulong A_FILE = 72340172838076673;  //Verified
     static ulong B_FILE = 144680345676153346; //Verified
@@ -31,7 +27,6 @@ public class ChessBoard : MonoBehaviour
     //Ranks
     static ulong[] RANK_MASKS = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000,
         0xFF00000000, 0xFF0000000000, 0xFF000000000000, 0xFF00000000000000 }; //Hexadecimal form ranks 1-8
-
                                 // H                G                   F                   E
     static ulong[] FILE_MASKS = { 0x101010101010101, 0x202020202020202, 0x404040404040404, 0x808080808080808,
         0x1010101010101010, 0x2020202020202020, 0x3030303030303030, 0x4040404040404040}; ////Hexadecimal Files are reversed, H-> A
@@ -66,6 +61,25 @@ public class ChessBoard : MonoBehaviour
     ulong AVAILABLE_MOVES;
 
     [SerializeField] private List<ChessBoardFile> file = new List<ChessBoardFile>();
+
+    private ulong blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_King, blk_Queens;
+    private ulong wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens;
+
+    #region Bitboard Properties
+    public ulong Blk_Pawns { get => blk_Pawns; private set => blk_Pawns = value; }
+    public ulong Blk_Knights { get => blk_Knights; private set => blk_Knights = value; }
+    public ulong Blk_Bishops { get => blk_Bishops; private set => blk_Bishops = value; }
+    public ulong Blk_Rooks { get => blk_Rooks; private set => blk_Rooks = value; }
+    public ulong Blk_King { get => blk_King; private set => blk_King = value; }
+    public ulong Blk_Queens { get => blk_Queens; private set => blk_Queens = value; }
+
+    public ulong Wht_Pawns { get => wht_Pawns; private set => wht_Pawns = value; }
+    public ulong Wht_Knights { get => wht_Knights; private set => wht_Knights = value; }
+    public ulong Wht_Bishops { get => wht_Bishops; private set => wht_Bishops = value; }
+    public ulong Wht_Rooks { get => wht_Rooks; private set => wht_Rooks = value; }
+    public ulong Wht_King { get => wht_King; private set => wht_King = value; }
+    public ulong Wht_Queens { get => wht_Queens; private set => wht_Queens = value; }
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -204,7 +218,7 @@ public class ChessBoard : MonoBehaviour
         List<Move> moveList = GetRookMoves("", blk_Rooks, 'r');
         moveList.AddRange(GetKnightMoves("", blk_Knights, 'n'));
         moveList.AddRange(GetBishopMoves("", blk_Bishops, 'b'));
-        moveList.AddRange(GetBlackPawnMoves("", blk_Pawns, 'p'));
+        moveList.AddRange(GetBlackPawnMoves("", Blk_Pawns, 'p'));
         moveList.AddRange(GetKingMoves("", blk_King, 'k'));
 
         moveList.AddRange(GetRookMoves("", blk_Queens, 'q'));
@@ -218,9 +232,9 @@ public class ChessBoard : MonoBehaviour
     public void UpdateBitBoards()
     {
         WHT_CANT_CAPTURE = ~(wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens | blk_King);
-        BLK_PIECES = blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens;
+        BLK_PIECES = Blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens;
         WHT_PIECES = wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens;
-        EMPTY_SQUARES = ~(blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens | wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens);
+        EMPTY_SQUARES = ~(Blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens | wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens);
 
         OCCUPIED = BLK_PIECES | WHT_PIECES;
         Debug.Log("BITBOARD OCCUPIED SQUARES: " + OCCUPIED);
@@ -276,7 +290,7 @@ public class ChessBoard : MonoBehaviour
      
     public void PosToBitBoard()
     {
-        blk_Pawns = blk_Knights = blk_Bishops = blk_Rooks = blk_King = blk_Queens = 0;
+        Blk_Pawns = blk_Knights = blk_Bishops = blk_Rooks = blk_King = blk_Queens = 0;
         wht_Pawns = wht_Knights = wht_Bishops = wht_Rooks = wht_King = wht_Queens = 0;
 
         int i = 0;
@@ -301,7 +315,7 @@ public class ChessBoard : MonoBehaviour
                         blk_Bishops += Convert.ToUInt64(b, 2);
                         break;
                     case ('p'):
-                        blk_Pawns += Convert.ToUInt64(b, 2);
+                        Blk_Pawns += Convert.ToUInt64(b, 2);
                         break;
                     case ('k'):
                         blk_King += Convert.ToUInt64(b, 2);
@@ -1235,19 +1249,19 @@ public class ChessBoard : MonoBehaviour
 
     public char GetCapturedPieceCode(int i)
     {
-        if (((blk_Pawns >> i) & 1 )== 1) return 'p';
-        if (((blk_Knights >> i) & 1 )== 1) return 'n';
-        if (((blk_Bishops >> i) & 1 )== 1) return 'b';
-        if (((blk_Rooks >> i) & 1 )== 1) return 'r';
-        if (((blk_Queens >> i) & 1 )== 1) return 'q';
-        if (((blk_King >> i) & 1 )== 1) return 'k';
+        if (((blk_Pawns >> i) & 1) == 1) return 'p';
+        if (((blk_Knights >> i) & 1) == 1) return 'n';
+        if (((blk_Bishops >> i) & 1) == 1) return 'b';
+        if (((blk_Rooks >> i) & 1) == 1) return 'r';
+        if (((blk_Queens >> i) & 1) == 1) return 'q';
+        if (((blk_King >> i) & 1) == 1) return 'k';
 
-        if (((wht_Pawns >> i) & 1 )== 1) return 'P';
-        if (((wht_Knights >> i) & 1 )== 1) return 'N';
-        if (((wht_Bishops >> i) & 1 )== 1) return 'B';
-        if (((wht_Rooks >> i) & 1 )== 1) return 'R';
-        if (((wht_Queens >> i) & 1 )== 1) return 'Q';
-        if (((wht_King >> i) & 1 )== 1) return 'K';
+        if (((wht_Pawns >> i) & 1) == 1) return 'P';
+        if (((wht_Knights >> i) & 1) == 1) return 'N';
+        if (((wht_Bishops >> i) & 1) == 1) return 'B';
+        if (((wht_Rooks >> i) & 1) == 1) return 'R';
+        if (((wht_Queens >> i) & 1) == 1) return 'Q';
+        if (((wht_King >> i) & 1) == 1) return 'K';
 
         //Found no captures, return whitespace
         return ' ';

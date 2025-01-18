@@ -24,18 +24,47 @@ public class Evaluation
         return eval;
     }
 
+    private int CountMaterial(ulong bitboard)
+    {
+        int count = 0;
+        for (int i = 0; i < 64; i++)
+        {
+            if (((bitboard >> i) & 1) == 1)
+            {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
     private float GetMaterialEval()
     {
-        int bRooks, bKnights, bBishops, bQueens, bPawns;
-            bRooks = bKnights = bBishops = bQueens = bPawns = 0;
-        int wRooks, wKnights, wBishops, wQueens, wPawns;
-            wRooks = wKnights = wBishops = wQueens = wPawns = 0;
+        //Counters
+        int bRooks, bKnights, bBishops, bQueens, bPawns, bKing;
+            bRooks = bKnights = bBishops = bQueens = bPawns = bKing = 0;
+        int wRooks, wKnights, wBishops, wQueens, wPawns, wKing;
+            wRooks = wKnights = wBishops = wQueens = wPawns = wKing = 0;
 
         float eval;
 
-        files = board.GetFiles();
-
         #region Material Count
+
+        bPawns = CountMaterial(board.Blk_Pawns);
+        bRooks = CountMaterial(board.Blk_Rooks);
+        bKnights = CountMaterial(board.Blk_Knights);
+        bBishops = CountMaterial(board.Blk_Bishops);
+        bQueens = CountMaterial(board.Blk_Queens);
+        bKing = CountMaterial(board.Blk_King);
+
+        wPawns = CountMaterial(board.Wht_Pawns);
+        wRooks = CountMaterial(board.Wht_Rooks);
+        wKnights = CountMaterial(board.Wht_Knights);
+        wBishops = CountMaterial(board.Wht_Bishops);
+        wQueens = CountMaterial(board.Wht_Queens);
+        wKing = CountMaterial(board.Wht_King);
+
+        /*
+        files = board.GetFiles();
         for (int row = 0; row < 8; row++)
         {
             for(int col = 0; col < 8; col++)
@@ -79,6 +108,7 @@ public class Evaluation
                 }
             }
         }
+        */
 
         int bPieceCount = bRooks + bKnights + bBishops + bQueens; //Start:  7
         int wPieceCount = wRooks + wKnights + wBishops + wQueens;
@@ -87,41 +117,44 @@ public class Evaluation
 
         //Pawn Material Value
         float pMult = Math.Abs(1.7f - totalPieces * 0.1f); //0.3 -> 1.7 in pawn value when piece count gets low
-        float bPawnsValue = bPawns * pMult;
-        float wPawnsValue = wPawns * pMult;
+        float bPawnsVal = bPawns * pMult;
+        float wPawnsVal = wPawns * pMult;
 
-        //Rook Material Value
-        float bRooksValue = bRooks * 5;
-        float wRooksValue = wRooks * 5;
+        //Rook Material
+        float bRooksVal = bRooks * 5;
+        float wRooksVal = wRooks * 5;
 
-        //Knight Material Value
-        float bKnightsValue = bKnights * 3f;
-            if (wPawns > 6) bKnightsValue += 0.1f; //At high pawn counts, the knight is more useful
-        float wKnightsValue = wKnights * 3f;
-            if (bPawns > 6) wKnightsValue += 0.1f;
+        //Knight Material
+        float bKnightsVal = bKnights * 3f;
+            if (wPawns > 6) bKnightsVal += 0.1f; //At high pawn counts, the knight is more useful
+        float wKnightsVal = wKnights * 3f;
+            if (bPawns > 6) wKnightsVal += 0.1f;
 
-        //Bishop Material Value
-        float bBishopsValue = bBishops * 3f;
-            if (wPawns <= 6) bBishopsValue += 0.1f; //At low pawn counts, the bishop is more useful
-        float wBishopsValue = wBishops * 3f;
-            if (bPawns <= 6) wBishopsValue += 0.1f;
+        //Bishop Material
+        float bBishopsVal = bBishops * 3f;
+            if (wPawns <= 6) bBishopsVal += 0.1f; //At low pawn counts, the bishop is more useful
+        float wBishopsVal = wBishops * 3f;
+            if (bPawns <= 6) wBishopsVal += 0.1f;
 
-        //Queen Material Value
-        float bQueensValue = bQueens * 9;
-        float wQueensValue = wQueens * 9;
+        //Queen Material
+        float bQueensVal = bQueens * 9;
+        float wQueensVal = wQueens * 9;
 
-        
-        //Debug.Log(wPawnsValue);
-        //Debug.Log(bPawnsValue);
+        //King Material
+        float bKingVal = bKing * 1000000;
+        float wKingVal = wKing * 1000000;
+
         /*
-        Debug.Log(wKnightsValue);
-        Debug.Log(wBishopsValue);
-        Debug.Log(wRooksValue);
-        Debug.Log(wQueensValue);
+        Debug.Log(wPawnsVal);
+        Debug.Log(bPawnsVal);
+        Debug.Log(wKnightsVal);
+        Debug.Log(wBishopsVal);
+        Debug.Log(wRooksVal);
+        Debug.Log(wQueensVal);
         */
 
-        eval = (wPawnsValue + wBishopsValue + wKnightsValue + wRooksValue + wQueensValue) 
-            - (bPawnsValue + bBishopsValue + bKnightsValue + bRooksValue + bQueensValue);
+        eval = (wPawnsVal + wBishopsVal + wKnightsVal + wRooksVal + wQueensVal + wKingVal) 
+            - (bPawnsVal + bBishopsVal + bKnightsVal + bRooksVal + bQueensVal - bKingVal);
 
         return eval;
     }
