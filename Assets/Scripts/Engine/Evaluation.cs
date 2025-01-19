@@ -154,7 +154,7 @@ public class Evaluation
         */
 
         eval = (wPawnsVal + wBishopsVal + wKnightsVal + wRooksVal + wQueensVal + wKingVal) 
-            - (bPawnsVal + bBishopsVal + bKnightsVal + bRooksVal + bQueensVal - bKingVal);
+            - (bPawnsVal + bBishopsVal + bKnightsVal + bRooksVal + bQueensVal + bKingVal);
 
         return eval;
     }

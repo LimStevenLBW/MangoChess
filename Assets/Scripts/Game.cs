@@ -23,6 +23,7 @@ public class Game : MonoBehaviour
         Black
     }
     private Side playerSide = Side.Undecided;
+    private Side computerSide = Side.Undecided;
 
     private Piece selectedPiece;
 
@@ -63,6 +64,7 @@ public class Game : MonoBehaviour
         gameUI.HideMenu();
         gameUI.ShowHud();
         playerSide = Side.White;
+        computerSide = Side.Black;
         gameUI.ShowPlayerToMoveLabel(playerSide);
     }
 
@@ -71,6 +73,7 @@ public class Game : MonoBehaviour
         gameUI.HideMenu();
         gameUI.ShowHud();
         playerSide = Side.Black;
+        computerSide = Side.White;
         gameUI.ShowPlayerToMoveLabel(playerSide);
 
         StartCoroutine(ComputerTakeTurn());
@@ -187,13 +190,20 @@ public class Game : MonoBehaviour
         if (SideToMove == Side.Black) moves = board.GetPossibleMovesBlack();
         if (SideToMove == Side.White) moves = board.GetPossibleMovesWhite();
 
+        bool computerSide;
+        if (playerSide == Side.White) computerSide = false;
+        else computerSide = true;
+
+        //mCalculator.ResetLine();
+        mCalculator.AlphaBetaSearch(4, -10000f, 10000f, computerSide);
+        //Move move = mCalculator.GetMove();
         Move move = mCalculator.GetRandomMove(moves);
         Debug.Log("CPU did " + move.ToString());
 
-        DoMove(move);
+        ComputerCompleteMove(move);
     }
 
-    void DoMove(Move move)
+    void ComputerCompleteMove(Move move)
     {
         sfx.PlayMoveSFX();
 
@@ -204,8 +214,8 @@ public class Game : MonoBehaviour
         end.SetNewPiece(piece);
 
         //King has moved
-        if (move.piece == 'k') board.HandleBlackCastling(0);
-        if (move.piece == 'K') board.HandleWhiteCastling(0);
+        if (move.piece == 'k') board.HandleBlackCastling(move.start);
+        if (move.piece == 'K') board.HandleWhiteCastling(move.start);
 
         start.ClearReference();
         piece.DisableOutline();

@@ -11,11 +11,22 @@ public class MoveCalculator
 
     private List<Move> line;
 
+    public Move GetMove()
+    {
+        return line[0];
+    }
+
     public List<Move> GetLine()
     {
+        Debug.Log("Reading Engine Line...");
+        for(int i = 0; i < line.Count; i++)
+        {
+            Debug.Log("Move:" + i + ": " + line[i].ToString());
+        }
         return line;
     }
 
+    //Make sure to reset the line before using alpha beta
     public void ResetLine()
     {
         line = new List<Move>();
@@ -42,10 +53,11 @@ public class MoveCalculator
      *  
      *  Game side will be represented by boolean to quickly reverse it
      */
-    public float AlphaBetaSearch(int depth, float alpha, float beta, bool side, List<Move> line)
+    public float AlphaBetaSearch(int depth, float alpha, float beta, bool side, List<Move> line = null)
     {
         if (depth == 0) return evaluator.GetEvaluation();
 
+        if (line == null) line = this.line; //Initialize line if this is the first alpha beta call
         List<Move> moves = new List<Move>();
 
         if (side) moves = board.GetPossibleMovesWhite();
@@ -64,7 +76,7 @@ public class MoveCalculator
             if (eval > alpha)   //   alpha = Math.Max(alpha, eval);
             {
                 alpha = eval;
-                line.Add(m);
+                this.line.Add(m);
             }
 
         }

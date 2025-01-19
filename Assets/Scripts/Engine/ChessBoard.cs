@@ -178,11 +178,13 @@ public class ChessBoard : MonoBehaviour
         }
 
         //Display all available moves for selected piece
+        
         Debug.Log("Available Moves:");
         foreach (Move move in moveList)
         {
             Debug.Log(move.ToString());
         }
+        
 
         DrawBitboard(AVAILABLE_MOVES); //Show available moves
         AVAILABLE_MOVES = 0; //Reset available moves
@@ -195,7 +197,6 @@ public class ChessBoard : MonoBehaviour
     public List<Move> GetPossibleMovesWhite()
     {
         CanWhiteCastle();
-
         List<Move> moveList = GetRookMoves("", wht_Rooks, 'R');
         moveList.AddRange(GetKnightMoves("", wht_Knights, 'N'));
         moveList.AddRange(GetBishopMoves("", wht_Bishops, 'B'));
@@ -232,15 +233,15 @@ public class ChessBoard : MonoBehaviour
     public void UpdateBitBoards()
     {
         WHT_CANT_CAPTURE = ~(wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens | blk_King);
-        BLK_PIECES = Blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens;
+        BLK_PIECES = blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens;
         WHT_PIECES = wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens;
-        EMPTY_SQUARES = ~(Blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens | wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens);
+        EMPTY_SQUARES = ~(blk_Pawns | blk_Knights | blk_Bishops | blk_Rooks | blk_King | blk_Queens | wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens);
 
         OCCUPIED = BLK_PIECES | WHT_PIECES;
-        Debug.Log("BITBOARD OCCUPIED SQUARES: " + OCCUPIED);
 
+        //Debug.Log("BITBOARD OCCUPIED SQUARES: " + OCCUPIED);
         //Debug.Log(DecimalToBitboard(OCCUPIED));
-        
+
     }
 
     //rnbqkbnr/pppppppp/2/k
@@ -389,61 +390,6 @@ public class ChessBoard : MonoBehaviour
         }
 
    
-    }
-
-    void CanBlackCastle()
-    {   //There was a change in rook position
-        if ((blk_Rooks | bKingRook) != blk_Rooks) blkCanKingSideCastle = false;
-        if ((blk_Rooks & bQueenRook) != blk_Rooks) blkCanQueenSideCastle = false;
-    }
-
-    void CanWhiteCastle()
-    {
-        if ((wht_Rooks | wKingRook) != wht_Rooks) whtCanKingSideCastle = false;
-        if ((wht_Rooks & wQueenRook) != wht_Rooks) whtCanQueenSideCastle = false;
-    }
-
-    public void HandleWhiteCastling(int kingLocation)
-    {
-        if (!whtCanKingSideCastle || !whtCanQueenSideCastle) return;
-        whtCanKingSideCastle = false;
-        whtCanQueenSideCastle = false;
-
-        if(kingLocation == 6) //King-Side Castle
-        {
-            Square rookSqr = GetSquareFromIndex(7);
-            Square nxtRookSqr = GetSquareFromIndex(5);
-            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
-            rookSqr.ClearReference();
-        }
-        if(kingLocation == 2)
-        {
-            Square rookSqr = GetSquareFromIndex(0);
-            Square nxtRookSqr = GetSquareFromIndex(3);
-            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
-            rookSqr.ClearReference();
-        }
-    }
-    public void HandleBlackCastling(int kingLocation)
-    {
-        if (!blkCanKingSideCastle || !blkCanQueenSideCastle) return;
-        blkCanKingSideCastle = false;
-        blkCanQueenSideCastle = false;
-
-        if (kingLocation == 62) //King-Side Castle
-        {
-            Square rookSqr = GetSquareFromIndex(64);
-            Square nxtRookSqr = GetSquareFromIndex(61);
-            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
-            rookSqr.ClearReference();
-        }
-        if (kingLocation == 58)
-        {
-            Square rookSqr = GetSquareFromIndex(56);
-            Square nxtRookSqr = GetSquareFromIndex(59);
-            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
-            rookSqr.ClearReference();
-        }
     }
 
     /*
@@ -1102,6 +1048,7 @@ public class ChessBoard : MonoBehaviour
         return moveList;
     }
 
+    #region King Moves and Castling
     public List<Move> GetKingMoves(string history, ulong king, char code)
     {
         ulong FRIENDLY;
@@ -1110,16 +1057,11 @@ public class ChessBoard : MonoBehaviour
         else FRIENDLY = BLK_PIECES;
 
         List<Move> moveList = new List<Move>();
-        // whtCanQueenSideCastle = true;
-        // whtCanKingSideCastle = true;
-
         ulong KING_MOVES = 0;
-        int start = -1; //fix later
 
-        //Castling Check
+        //Castling
         if (char.IsUpper(code)) //White
         {
-            //PAWN_MOVES = (wht_Pawns << 16) & EMPTY_SQUARES & (EMPTY_SQUARES << 8) & RANK_4;
             if (whtCanKingSideCastle) KING_MOVES += (king << 2) & EMPTY_SQUARES & (EMPTY_SQUARES << 1);
             if (whtCanQueenSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1);  
         }
@@ -1133,10 +1075,11 @@ public class ChessBoard : MonoBehaviour
         {
             if (((KING_MOVES >> i) & 1) == 1)
             {
-                if (start == -1) start = i + 9;
-                int end = (i);
+                int start;
+                if (char.IsUpper(code)) start = 4;
+                else start = 60;
 
-                Move m = new Move(start, i, code, false, true, false);
+                Move m = new Move(start, i, code, true, false, false);
                 moveList.Add(m);
             }
         }
@@ -1155,13 +1098,20 @@ public class ChessBoard : MonoBehaviour
 
         AVAILABLE_MOVES += KING_MOVES;
 
+        //Find the starting location
+        int start = 0;
+        for (int i = 0; i < 64; i++)
+        {
+            if (((king >> i) & 1) == 1)
+            {
+                start = i;
+            }
+        }
+
         for (int i = 0; i < 64; i++) //will need a helper method for trailing zero counting
         {// int i = long.number of trailingzeros(king moves); i < 64 - ulong.numberofleadingzeros(king moves); i++
             if (((KING_MOVES >> i) & 1) == 1)
             {
-                if (start == -1) start = i + 9;
-                int end = (i);
-
                 char c = GetCapturedPieceCode(i);
                 Move m = new Move(start, i, code, false, false, false, capturedPiece: c);
                 moveList.Add(m);
@@ -1170,6 +1120,64 @@ public class ChessBoard : MonoBehaviour
 
         return moveList;
     }
+
+    //Was there a change in rook position, if so disable castling for that side
+    void CheckForBlkRookChanges()
+    {
+        if ((blk_Rooks & bKingRook) != blk_Rooks) blkCanKingSideCastle = false;
+        if ((blk_Rooks & bQueenRook) != blk_Rooks) blkCanQueenSideCastle = false;
+    }
+
+    void CheckForWhtRookChanges()
+    {
+        if ((wht_Rooks & wKingRook) != wht_Rooks) whtCanKingSideCastle = false;
+        if ((wht_Rooks & wQueenRook) != wht_Rooks) whtCanQueenSideCastle = false;
+    }
+
+    public void HandleWhiteCastling(int kingLocation)
+    {
+        if (!whtCanKingSideCastle || !whtCanQueenSideCastle) return;
+        whtCanKingSideCastle = false;
+        whtCanQueenSideCastle = false;
+
+        if (kingLocation == 6) //King-Side Castle
+        {
+            Square rookSqr = GetSquareFromIndex(7);
+            Square nxtRookSqr = GetSquareFromIndex(5);
+            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
+            rookSqr.ClearReference();
+        }
+        if (kingLocation == 2)
+        {
+            Square rookSqr = GetSquareFromIndex(0);
+            Square nxtRookSqr = GetSquareFromIndex(3);
+            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
+            rookSqr.ClearReference();
+        }
+    }
+    public void HandleBlackCastling(int kingLocation)
+    {
+        if (!blkCanKingSideCastle || !blkCanQueenSideCastle) return;
+        blkCanKingSideCastle = false;
+        blkCanQueenSideCastle = false;
+
+        if (kingLocation == 62) //King-Side Castle
+        {
+            Square rookSqr = GetSquareFromIndex(64);
+            Square nxtRookSqr = GetSquareFromIndex(61);
+            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
+            rookSqr.ClearReference();
+        }
+        if (kingLocation == 58)
+        {
+            Square rookSqr = GetSquareFromIndex(56);
+            Square nxtRookSqr = GetSquareFromIndex(59);
+            nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
+            rookSqr.ClearReference();
+        }
+    }
+
+    #endregion
 
     public static ulong GetHorizontalVerticalMoves(int pos)
     {
@@ -1287,15 +1295,108 @@ public class ChessBoard : MonoBehaviour
         return null;
     }
 
+    /*
+     * Used by the engine to test different lines of play
+     */
     public void MakeMove(Move m)
     {
-       
+        //  private ulong blk_Pawns, blk_Knights, blk_Bishops, blk_Rooks, blk_King, blk_Queens;
+        //private ulong wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens;
+        if (m.isCastle)
+        {
+            if (char.IsUpper(m.piece)) { whtCanKingSideCastle = false; whtCanQueenSideCastle = false; }
+            else { blkCanKingSideCastle = false; blkCanQueenSideCastle = false; }
+        }
+        else
+        {   //(((blk_Pawns >> m.start) & 1) == 1) maybe not necessary, supposed to have been calculated earlier?
+            switch (m.piece) //Simple moves
+            {
+                case 'p': blk_Pawns &= ~(1ul << m.start); blk_Pawns |= (1ul << m.end); break;
+                case 'n': blk_Knights &= ~(1ul << m.start); blk_Knights |= (1ul << m.end); break;
+                case 'b': blk_Bishops &= ~(1ul << m.start); blk_Bishops |= (1ul << m.end); break;
+                case 'r': blk_Rooks &= ~(1ul << m.start); blk_Rooks |= (1ul << m.end); break;
+                case 'q': blk_Queens &= ~(1ul << m.start); blk_Queens |= (1ul << m.end); break;
+                case 'k': blk_King &= ~(1ul << m.start); blk_King |= (1ul << m.end); break;
 
+                case 'P': wht_Pawns &= ~(1ul << m.start); wht_Pawns |= (1ul << m.end); break;
+                case 'N': wht_Knights &= ~(1ul << m.start); wht_Knights |= (1ul << m.end); break;
+                case 'B': wht_Bishops &= ~(1ul << m.start); wht_Bishops |= (1ul << m.end); break;
+                case 'R': wht_Rooks &= ~(1ul << m.start); wht_Rooks |= (1ul << m.end); break;
+                case 'Q': wht_Queens &= ~(1ul << m.start); wht_Queens |= (1ul << m.end); break;
+                case 'K': wht_King &= ~(1ul << m.start); wht_King |= (1ul << m.end); break;
+            }
+        }
+
+        switch (m.capturedPiece)
+        {
+            case 'p': blk_Pawns &= ~(1ul << m.end); break;
+            case 'n': blk_Knights &= ~(1ul << m.end); break;
+            case 'b': blk_Bishops &= ~(1ul << m.end); break;
+            case 'r': blk_Rooks &= ~(1ul << m.end); break; 
+            case 'q': blk_Queens &= ~(1ul << m.end); break;
+            case 'k': blk_King &= ~(1ul << m.end); break;
+
+            case 'P': wht_Pawns &= ~(1ul << m.end); break;
+            case 'N': wht_Knights &= ~(1ul << m.end); break;
+            case 'B': wht_Bishops &= ~(1ul << m.end); break;
+            case 'R': wht_Rooks &= ~(1ul << m.end); break;
+            case 'Q': wht_Queens &= ~(1ul << m.end); break;
+            case 'K': wht_King &= ~(1ul << m.end); break;
+
+            case ' ': break;
+        }
+
+
+        UpdateBitBoards();
     }
 
     public void UnmakeMove(Move m)
     {
+        if (m.isCastle)
+        {
+            if (char.IsUpper(m.piece)) { whtCanKingSideCastle = true; whtCanQueenSideCastle = true; }
+            else { blkCanKingSideCastle = true; blkCanQueenSideCastle = true; }
+        }
+        else
+        {  
+            switch (m.piece)
+            {
+                case 'p': blk_Pawns &= ~(1ul << m.end); blk_Pawns |= (1ul << m.start); break;
+                case 'n': blk_Knights &= ~(1ul << m.end); blk_Knights |= (1ul << m.start); break;
+                case 'b': blk_Bishops &= ~(1ul << m.end); blk_Bishops |= (1ul << m.start); break;
+                case 'r': blk_Rooks &= ~(1ul << m.end); blk_Rooks |= (1ul << m.start); break;
+                case 'q': blk_Queens &= ~(1ul << m.end); blk_Queens |= (1ul << m.start); break;
+                case 'k': blk_King &= ~(1ul << m.end); blk_King |= (1ul << m.start); break;
 
+                case 'P': wht_Pawns &= ~(1ul << m.end); wht_Pawns |= (1ul << m.start); break;
+                case 'N': wht_Knights &= ~(1ul << m.end); wht_Knights |= (1ul << m.start); break;
+                case 'B': wht_Bishops &= ~(1ul << m.end); wht_Bishops |= (1ul << m.start); break;
+                case 'R': wht_Rooks &= ~(1ul << m.end); wht_Rooks |= (1ul << m.start); break;
+                case 'Q': wht_Queens &= ~(1ul << m.end); wht_Queens |= (1ul << m.start); break;
+                case 'K': wht_King &= ~(1ul << m.end); wht_King |= (1ul << m.start); break;
+            }
+        }
+
+        switch (m.capturedPiece)
+        {
+            case 'p': blk_Pawns |= (1ul << m.end); break;
+            case 'n': blk_Knights |= (1ul << m.end); break;
+            case 'b': blk_Bishops |= (1ul << m.end); break;
+            case 'r': blk_Rooks |= (1ul << m.end); break;
+            case 'q': blk_Queens |= (1ul << m.end); break;
+            case 'k': blk_King |= (1ul << m.end); break;
+
+            case 'P': wht_Pawns |= (1ul << m.end); break;
+            case 'N': wht_Knights |= (1ul << m.end); break;
+            case 'B': wht_Bishops |= (1ul << m.end); break;
+            case 'R': wht_Rooks |= (1ul << m.end); break;
+            case 'Q': wht_Queens |= (1ul << m.end); break;
+            case 'K': wht_King |= (1ul << m.end); break;
+
+            case ' ': break;
+        }
+
+        UpdateBitBoards();
     }
 
     // Update is called once per frame
