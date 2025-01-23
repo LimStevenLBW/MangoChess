@@ -18479,7 +18479,7 @@ GameObject:
   - component: {fileID: 7051325413310008187}
   - component: {fileID: 920803756992273391}
   - component: {fileID: 5766421828637226929}
-  - component: {fileID: 5105601825839826712}
+  - component: {fileID: 8262086171633958866}
   m_Layer: 0
   m_Name: ChessBoard
   m_TagString: Untagged
@@ -18579,7 +18579,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5779328, y: 0.08999992, z: 0.5779328}
   m_Center: {x: 0, y: 0.045000825, z: 0}
---- !u!114 &5105601825839826712
+--- !u!114 &8262086171633958866
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18588,11 +18588,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7575216623314279871}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24e512b0c6793aa40a2b949aa4471b86, type: 3}
+  m_Script: {fileID: 11500000, guid: d2107628c46083647a906b7064eeb205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialFEN: 
-  file:
+  files:
   - {fileID: 4974643120305669848}
   - {fileID: 8948301855775622433}
   - {fileID: 779276808181332407}

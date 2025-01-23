@@ -5,8 +5,9 @@ using TMPro;
 
 public class InputFEN : MonoBehaviour
 {
-    [SerializeField] private ChessBoard board;
-    
+    [SerializeField] private ChessBoard chessBoard;
+
+    private BitBoard board;
     private TMP_InputField input;
     private bool isFocused;
     private string initialFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -14,6 +15,7 @@ public class InputFEN : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        board = chessBoard.GetBitBoard();
         input = GetComponent<TMP_InputField>();
         input.onSelect.AddListener((string text) => isFocused = true);
         input.onDeselect.AddListener((string text) => isFocused = false);

@@ -8,10 +8,10 @@ public class Evaluation
     private float whiteRating;
     private float blackRating;
 
-    public ChessBoard board;
+    public BitBoard board;
     private List<ChessBoardFile> files;
 
-    public Evaluation(ChessBoard board)
+    public Evaluation(BitBoard board)
     {
         this.board = board;
     }

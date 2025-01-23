@@ -3962,7 +3962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c44c8640246c68846bd595bb43c5c6be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  board: {fileID: 2982874843900492408}
+  chessBoard: {fileID: 2148335857770495126}
 --- !u!1001 &197884027
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30840,8 +30840,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1769388953040066387}
-  - {fileID: 8157125840904552913}
   - {fileID: 191022928}
+  - {fileID: 8157125840904552913}
   - {fileID: 1773286615}
   - {fileID: 19888818}
   m_Father: {fileID: 7304937324437146360}
@@ -38332,10 +38332,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5402abc348c52a4790ec75eb9cd2a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  board: {fileID: 2982874843900492408}
-  gameUI: {fileID: 8306028087200419327}
   SideToMove: 1
   DEBUG_MODE: 1
+  gameUI: {fileID: 8306028087200419327}
   gameAdvantage: {fileID: 22414262}
   sfx: {fileID: 1026302601}
 --- !u!4 &1578266544
@@ -53012,7 +53011,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.2
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -53309,7 +53308,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2982874843900492408}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ChessBoard, Assembly-CSharp
         m_MethodName: ResetStartingPosition
         m_Mode: 1
@@ -53648,7 +53647,8 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5105601825839826712, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -53701,6 +53701,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
+--- !u!114 &2148335857770495126 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8262086171633958866, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
+  m_PrefabInstance: {fileID: 2148335857770495124}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2107628c46083647a906b7064eeb205, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2184822402494690393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53873,17 +53884,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &2982874843900492408 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5105601825839826712, guid: 25eea2e73c93e104abf8ca868d9d250f, type: 3}
-  m_PrefabInstance: {fileID: 2148335857770495124}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24e512b0c6793aa40a2b949aa4471b86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3463840333918427788
 GameObject:
   m_ObjectHideFlags: 0
@@ -53912,7 +53912,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e993742524623e4f92273a5a51a772b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  board: {fileID: 2982874843900492408}
+  chessBoard: {fileID: 2148335857770495126}
 --- !u!222 &3957114121965995671
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -6,14 +6,15 @@ using UnityEngine;
 public class MoveCalculator
 {
     private Evaluation evaluator;
-    private ChessBoard board;
+    private BitBoard board;
     private Game.Side side;
 
     private List<Move> line;
 
     public Move GetMove()
     {
-        return line[0];
+        GetLine();
+        return line[line.Count - 1];
     }
 
     public List<Move> GetLine()
@@ -32,12 +33,24 @@ public class MoveCalculator
         line = new List<Move>();
     }
 
-    public MoveCalculator(Evaluation evaluator, ChessBoard board)
+    public MoveCalculator(Evaluation evaluator, BitBoard board)
     {
         this.line = new List<Move>();
         this.evaluator = evaluator;
         this.board = board;
     }
+
+    /*
+     *  The idea is that two scores are passed around in the search.  
+     *  The first one is alpha, which is the best score that can be forced by some means. 
+     *  Anything worth less than this is of no use, because there is a strategy that 
+     *  is known to result in a score of alpha.  Anything less than or equal to alpha is no
+     *  improvement.The second score is beta. Beta is the worst-case scenario for the opponent. 
+     *  It's the worst thing that the opponent has to endure, because it's known that there is a
+     *  way for the opponent to force a situation no worse than beta, from the opponent's point of view. 
+     *  If the search finds something that returns a score of beta or better, it's too good, so the side 
+     *  to move is not going to get a chance to use this strategy.
+     */
 
     /*
      *  Upper and Lower Bound Search (called Alpha and Beta.) 
@@ -67,8 +80,11 @@ public class MoveCalculator
 
         foreach (Move m in moves)
         {
+           // Debug.Log("depth" + depth + ", move:" + m);
+            if (m.isCastle) continue; //Skipping castle for now
+
             board.MakeMove(m);
-            float eval = AlphaBetaSearch(depth - 1, -beta, -alpha, !side, line);
+            float eval = -AlphaBetaSearch(depth - 1, -beta, -alpha, !side, line);
             board.UnmakeMove(m);
 
             if (eval >= beta) return beta;

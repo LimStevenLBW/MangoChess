@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    public ChessBoard board;
-    public GameUI gameUI;
     public Side SideToMove = Side.White;
     public bool DEBUG_MODE;
 
+    public GameUI gameUI;
     public MoveCalculator mCalculator;
     public GameAdvantage gameAdvantage;
 
+    public AudioSFX sfx;
+
+    private BitBoard board;
     private Evaluation evaluator;
     private List<Move> moveHistory;
-    public AudioSFX sfx;
+
 
     public enum Side
     {
@@ -33,11 +35,6 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        evaluator = new Evaluation(board);
-        mCalculator = new MoveCalculator(evaluator, board);
-        moveHistory = new List<Move>();
-
-
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -46,6 +43,14 @@ public class Game : MonoBehaviour
         {
             instance = this;
         }
+    }
+
+    public void InitializeData(BitBoard board)
+    {
+        this.board = board;
+        evaluator = new Evaluation(board);
+        mCalculator = new MoveCalculator(evaluator, board);
+        moveHistory = new List<Move>();
     }
 
     public bool IsStarted()
@@ -186,18 +191,20 @@ public class Game : MonoBehaviour
         float num = (float)(r.NextDouble() + 0.5f);
         yield return new WaitForSeconds(num);
 
-        List<Move> moves = new List<Move>();
-        if (SideToMove == Side.Black) moves = board.GetPossibleMovesBlack();
-        if (SideToMove == Side.White) moves = board.GetPossibleMovesWhite();
 
         bool computerSide;
         if (playerSide == Side.White) computerSide = false;
         else computerSide = true;
 
-        //mCalculator.ResetLine();
-        mCalculator.AlphaBetaSearch(4, -10000f, 10000f, computerSide);
-        //Move move = mCalculator.GetMove();
-        Move move = mCalculator.GetRandomMove(moves);
+        mCalculator.ResetLine();
+        mCalculator.AlphaBetaSearch(3, -10000f, 10000f, computerSide);
+        Move move = mCalculator.GetMove();
+
+        //List<Move> moves = new List<Move>();
+        //if (SideToMove == Side.Black) moves = board.GetPossibleMovesBlack();
+        //if (SideToMove == Side.White) moves = board.GetPossibleMovesWhite();
+        //Move move = mCalculator.GetRandomMove(moves);
+        
         Debug.Log("CPU did " + move.ToString());
 
         ComputerCompleteMove(move);
@@ -219,7 +226,6 @@ public class Game : MonoBehaviour
 
         start.ClearReference();
         piece.DisableOutline();
-        piece = null;
 
         board.PosToBitBoard(); //Updates the bitboards and positions
 
@@ -232,12 +238,6 @@ public class Game : MonoBehaviour
     {
         moveHistory.Add(move);
 
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
     }
 
     // Update is called once per frame
