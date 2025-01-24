@@ -8,7 +8,7 @@ public class Evaluation
     private float whiteRating;
     private float blackRating;
 
-    public BitBoard board;
+    private BitBoard board;
     private List<ChessBoardFile> files;
 
     public Evaluation(BitBoard board)
@@ -16,8 +16,9 @@ public class Evaluation
         this.board = board;
     }
 
-    public float GetEvaluation()
+    public float GetEvaluation(BitBoard board)
     {
+        this.board = board;
         float eval = 0;
         eval += GetMaterialEval();
 

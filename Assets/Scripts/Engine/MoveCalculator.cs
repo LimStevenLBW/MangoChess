@@ -14,7 +14,7 @@ public class MoveCalculator
     public Move GetMove()
     {
         GetLine();
-        return line[line.Count - 1];
+        return line[0];
     }
 
     public List<Move> GetLine()
@@ -28,9 +28,13 @@ public class MoveCalculator
     }
 
     //Make sure to reset the line before using alpha beta
-    public void ResetLine()
+    public void NewLine()
     {
         line = new List<Move>();
+        line.Add(new Move());
+        line.Add(new Move());
+        line.Add(new Move());
+        line.Add(new Move());
     }
 
     public MoveCalculator(Evaluation evaluator, BitBoard board)
@@ -66,11 +70,11 @@ public class MoveCalculator
      *  
      *  Game side will be represented by boolean to quickly reverse it
      */
-    public float AlphaBetaSearch(int depth, float alpha, float beta, bool side, List<Move> line = null)
+    public float AlphaBetaSearch(int depth, float alpha, float beta, BitBoard board, bool side)
     {
-        if (depth == 0) return evaluator.GetEvaluation();
+        if (depth == 0) return evaluator.GetEvaluation(board);
 
-        if (line == null) line = this.line; //Initialize line if this is the first alpha beta call
+        //if (line == null) line = this.line; //Initialize line if this is the first alpha beta call
         List<Move> moves = new List<Move>();
 
         if (side) moves = board.GetPossibleMovesWhite();
@@ -80,19 +84,20 @@ public class MoveCalculator
 
         foreach (Move m in moves)
         {
-           // Debug.Log("depth" + depth + ", move:" + m);
+            BitBoard temp = board.Copy();
+            // Debug.Log("depth" + depth + ", move:" + m);
             if (m.isCastle) continue; //Skipping castle for now
 
-            board.MakeMove(m);
-            float eval = -AlphaBetaSearch(depth - 1, -beta, -alpha, !side, line);
-            board.UnmakeMove(m);
+            temp.MakeMove(m);
+            float eval = -AlphaBetaSearch(depth - 1, -beta, -alpha, temp, !side);
+            //board.UnmakeMove(m);
 
             if (eval >= beta) return beta;
 
             if (eval > alpha)   //   alpha = Math.Max(alpha, eval);
             {
                 alpha = eval;
-                this.line.Add(m);
+                line[depth - 1] = m; //Replace the line
             }
 
         }

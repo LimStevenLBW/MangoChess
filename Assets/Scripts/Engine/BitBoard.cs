@@ -80,7 +80,8 @@ public class BitBoard
     public ulong Wht_King { get => wht_King; private set => wht_King = value; }
     public ulong Wht_Queens { get => wht_Queens; private set => wht_Queens = value; }
     #endregion
-
+    public BitBoard() { }
+   
     public BitBoard(List<ChessBoardFile> files)
     {
         this.files = files;
@@ -111,6 +112,34 @@ public class BitBoard
         ClearBoard();
 
         FENtoChessBoard(defaultFEN);
+    }
+
+    public BitBoard Copy()
+    {
+        BitBoard copy = new BitBoard();
+        copy.blk_Pawns = blk_Pawns;
+        copy.blk_Knights = blk_Knights;
+        copy.blk_Bishops = blk_Bishops;
+        copy.blk_Rooks = blk_Rooks;
+        copy.blk_Queens = blk_Queens;
+        copy.blk_King = blk_King;
+
+        copy.wht_Pawns = wht_Pawns;
+        copy.wht_Knights = wht_Knights;
+        copy.wht_Bishops = wht_Bishops;
+        copy.wht_Rooks = wht_Rooks;
+        copy.wht_Queens = wht_Queens;
+        copy.wht_King = wht_King;
+
+        copy.CopyRules(whtCanQueenSideCastle, whtCanKingSideCastle, blkCanQueenSideCastle, blkCanKingSideCastle);
+        return copy;
+    }
+
+    public void CopyRules(bool wQCastle, bool wKCastle, bool bQCastle, bool bKCastle){ 
+        whtCanQueenSideCastle = wQCastle;
+        whtCanKingSideCastle = wKCastle;
+        blkCanQueenSideCastle = bQCastle;
+        blkCanKingSideCastle = bKCastle;
     }
 
     public void ClearBoard()

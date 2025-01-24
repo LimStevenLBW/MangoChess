@@ -17,7 +17,6 @@ public class Game : MonoBehaviour
     private Evaluation evaluator;
     private List<Move> moveHistory;
 
-
     public enum Side
     {
         Undecided,
@@ -180,7 +179,7 @@ public class Game : MonoBehaviour
 
         board.PosToBitBoard(); //Updates the bitboards and positions
 
-        gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation());
+        gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
 
         SwapPlayerTurn();
     }
@@ -196,8 +195,8 @@ public class Game : MonoBehaviour
         if (playerSide == Side.White) computerSide = false;
         else computerSide = true;
 
-        mCalculator.ResetLine();
-        mCalculator.AlphaBetaSearch(3, -10000f, 10000f, computerSide);
+        mCalculator.NewLine();
+        mCalculator.AlphaBetaSearch(3, -10000f, 10000f, board, computerSide);
         Move move = mCalculator.GetMove();
 
         //List<Move> moves = new List<Move>();
@@ -229,7 +228,7 @@ public class Game : MonoBehaviour
 
         board.PosToBitBoard(); //Updates the bitboards and positions
 
-        gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation());
+        gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
 
         SwapPlayerTurn();
     }
