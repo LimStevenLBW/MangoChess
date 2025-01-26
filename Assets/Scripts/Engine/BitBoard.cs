@@ -16,7 +16,7 @@ public class BitBoard
     static ulong wKingRook = 128;
     static ulong wQueenRook = 1;
 
-    public string initialFEN = "";
+    public string initialFEN = "1r3rk1/3np1bp/BPp1bnq1/5p2/2NB2pR/1NQ3P1/R1P1pPPK/8";
 
     //Edge Files
     static ulong A_FILE = 72340172838076673;  //Verified
@@ -429,42 +429,46 @@ public class BitBoard
 
     //RIGHT CAPTURE
     //All pieces that a pawn can capture to the right if that piece is not on Rank8(promotion) or A File(can't right capture)
-    ulong PAWN_MOVES = (wht_Pawns << 9) & BLK_PIECES & ~RANK_8 & ~A_FILE;
+    ulong PAWN_MOVES = (wht_Pawns << 9) & BLK_PIECES & ~A_FILE; //& ~RANK_8
     AVAILABLE_MOVES += PAWN_MOVES;
     for (int i = 0; i < 64; i++) //Iterate through the bitboard
     {
         if (((PAWN_MOVES >> i) & 1) == 1) //if the bit is active
         {
+            bool isPromotion = false;
+            if (i >= 0 && i < 8) isPromotion = true;
             char c = GetCapturedPieceCode(i);
-            Move m = new Move(i - 9, i, code, false, false, false, capturedPiece: c);
+            Move m = new Move(i - 9, i, code, false, false, isPromotion, capturedPiece: c);
             moveList.Add(m);
         }
     }
 
     //LEFT CAPTURE
-    PAWN_MOVES = (wht_Pawns << 7) & BLK_PIECES & ~RANK_8 & ~H_FILE;
+    PAWN_MOVES = (wht_Pawns << 7) & BLK_PIECES & ~H_FILE;
     AVAILABLE_MOVES += PAWN_MOVES;
     for (int i = 0; i < 64; i++) //Iterate through the bitboard, possibly optimize using trailing zeros calculation instead
     {
         if (((PAWN_MOVES >> i) & 1) == 1) // moveList += "" + (i / 8 + 1) + (i % 8 + 1) + (i / 8) + (i % 8);
         {
+            bool isPromotion = false;
+            if (i >= 0 && i < 8) isPromotion = true;
             char c = GetCapturedPieceCode(i);
-            Move m = new Move(i - 7, i, code, false, false, false, capturedPiece: c);
+            Move m = new Move(i - 7, i, code, false, false, isPromotion, capturedPiece: c);
             moveList.Add(m);   
         }
     }
 
     //FORWARD MOVE ONCE
     //----- Forward Moves, if square is empty -----
-    PAWN_MOVES = (wht_Pawns << 8) & EMPTY_SQUARES & ~RANK_8;
+    PAWN_MOVES = (wht_Pawns << 8) & EMPTY_SQUARES;
     AVAILABLE_MOVES += PAWN_MOVES;
     for (int i = 0; i < 64; i++)
     {
         if (((PAWN_MOVES >> i) & 1) == 1)
         {
-            int start = (i - 8);
-            int end = (i);
-            Move m = new Move(start, end, code, false, false, false);
+            bool isPromotion = false;
+            if (i >= 0 && i < 8) isPromotion = true;
+            Move m = new Move(i - 8, i, code, false, false, isPromotion);
             moveList.Add(m);
             //moveList += " / " + (i / 8 + 1) + " / " + (i % 8) + " / " + (i / 8) + " / " + (i % 8);
         }
@@ -547,40 +551,46 @@ public class BitBoard
         List<Move> moveList = new List<Move>();
 
         //RIGHT CAPTURE
-        ulong PAWN_MOVES = (blk_Pawns >> 9) & WHT_PIECES & ~RANK_8 & ~H_FILE;
+        ulong PAWN_MOVES = (blk_Pawns >> 9) & WHT_PIECES & ~H_FILE;
         AVAILABLE_MOVES += PAWN_MOVES;
         for (int i = 0; i < 64; i++) //Iterate through the bitboard
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
+                bool isPromotion = false;
+                if (i >= 0 && i < 8) isPromotion = true;
                 char c = GetCapturedPieceCode(i);
-                Move m = new Move(i + 9, i, code, false, false, false, capturedPiece: c);
+                Move m = new Move(i + 9, i, code, false, false, isPromotion, capturedPiece: c);
                 moveList.Add(m);
             }
         }
 
         //LEFT CAPTURE
-        PAWN_MOVES = (blk_Pawns >> 7) & WHT_PIECES & ~RANK_8 & ~A_FILE;
+        PAWN_MOVES = (blk_Pawns >> 7) & WHT_PIECES & ~A_FILE;
         AVAILABLE_MOVES += PAWN_MOVES;
         for (int i = 0; i < 64; i++) 
         {
             if (((PAWN_MOVES >> i) & 1) == 1)         
             {
+                bool isPromotion = false;
+                if (i >= 0 && i < 8) isPromotion = true;
                 char c = GetCapturedPieceCode(i);
-                Move m = new Move(i+7, i, code, false, false, false, capturedPiece: c);
+                Move m = new Move(i+7, i, code, false, false, isPromotion, capturedPiece: c);
                 moveList.Add(m);
             }
 
         }
 
         //FORWARD MOVE ONCE
-        PAWN_MOVES = (blk_Pawns >> 8) & EMPTY_SQUARES & ~RANK_1;
+        PAWN_MOVES = (blk_Pawns >> 8) & EMPTY_SQUARES; //& ~RANK_1;
         AVAILABLE_MOVES += PAWN_MOVES;
         for (int i = 0; i < 64; i++)
         {
             if (((PAWN_MOVES >> i) & 1) == 1)
             {
-                Move m = new Move(i+8, i, code, false, false, false);
+                bool isPromotion = false;
+                if (i >= 0 && i < 8) isPromotion = true;
+                Move m = new Move(i+8, i, code, false, false, isPromotion);
                 moveList.Add(m);
             }
         }
@@ -1070,8 +1080,6 @@ public class BitBoard
             }
         }
 
-
-
         return moveList;
     }
 
@@ -1338,14 +1346,20 @@ public class BitBoard
         {   //(((blk_Pawns >> m.start) & 1) == 1) maybe not necessary, supposed to have been calculated earlier?
             switch (m.piece) //Simple moves
             {
-                case 'p': blk_Pawns &= ~(1ul << m.start); blk_Pawns |= (1ul << m.end); break;
+                case 'p': blk_Pawns &= ~(1ul << m.start);
+                    if (m.isPromotion) blk_Queens |= (1ul << m.end);
+                    else blk_Pawns |= (1ul << m.end);
+                    break;
                 case 'n': blk_Knights &= ~(1ul << m.start); blk_Knights |= (1ul << m.end); break;
                 case 'b': blk_Bishops &= ~(1ul << m.start); blk_Bishops |= (1ul << m.end); break;
                 case 'r': blk_Rooks &= ~(1ul << m.start); blk_Rooks |= (1ul << m.end); break;
                 case 'q': blk_Queens &= ~(1ul << m.start); blk_Queens |= (1ul << m.end); break;
                 case 'k': blk_King &= ~(1ul << m.start); blk_King |= (1ul << m.end); break;
 
-                case 'P': wht_Pawns &= ~(1ul << m.start); wht_Pawns |= (1ul << m.end); break;
+                case 'P': wht_Pawns &= ~(1ul << m.start);
+                    if (m.isPromotion) wht_Queens |= (1ul << m.end);
+                    else wht_Pawns |= (1ul << m.end);
+                    break;
                 case 'N': wht_Knights &= ~(1ul << m.start); wht_Knights |= (1ul << m.end); break;
                 case 'B': wht_Bishops &= ~(1ul << m.start); wht_Bishops |= (1ul << m.end); break;
                 case 'R': wht_Rooks &= ~(1ul << m.start); wht_Rooks |= (1ul << m.end); break;
@@ -1373,10 +1387,10 @@ public class BitBoard
             case ' ': break;
         }
 
-
         UpdateBitBoards();
     }
 
+    //Not used anymore
     public void UnmakeMove(Move m)
     {
         if (m.isCastle)

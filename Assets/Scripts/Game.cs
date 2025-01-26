@@ -142,6 +142,7 @@ public class Game : MonoBehaviour
     }
 
     /*
+     * Note, should redo to make it use less redundant code, merge with computer makemove
      * Makes a piece move from player input and updates the board
      */
     public void MakePlayerMove(Square destination)
@@ -162,10 +163,15 @@ public class Game : MonoBehaviour
         {
             sfx.PlayCaptureSFX();
         }
-
+        //Special Cases
         if (selectedPiece.GetCode() == 'k') board.HandleBlackCastling(destination.GetID());
         if (selectedPiece.GetCode() == 'K') board.HandleWhiteCastling(destination.GetID());
-        destination.SetNewPiece(selectedPiece);
+        
+        //Pawn promote, buggy, but seems to work as long as pawn promotion isnt the first move
+        if (selectedPiece.GetCode() == 'P' && destination.GetID() >= 56) destination.PromotePawn(selectedPiece);
+        else if (selectedPiece.GetCode() == 'p' && destination.GetID() < 8) destination.PromotePawn(selectedPiece);
+        else destination.SetNewPiece(selectedPiece);
+
 
 
         selectedPiece.DisableOutline();
@@ -218,11 +224,16 @@ public class Game : MonoBehaviour
         Square start = board.GetSquareFromIndex(move.start);
         Square end = board.GetSquareFromIndex(move.end);
         Piece piece = start.GetCurrentPiece();
-        end.SetNewPiece(piece);
+        
 
         //King has moved
         if (move.piece == 'k') board.HandleBlackCastling(move.start);
         if (move.piece == 'K') board.HandleWhiteCastling(move.start);
+
+        //Pawn promote, buggy, but seems to work as long as pawn promotion isnt the first move
+        if (piece.GetCode() == 'P' && move.end >= 56) end.PromotePawn(piece);
+        else if (piece.GetCode() == 'p' && move.end < 8) end.PromotePawn(piece);
+        else end.SetNewPiece(piece);
 
         start.ClearReference();
         piece.DisableOutline();

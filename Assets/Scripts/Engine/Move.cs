@@ -15,7 +15,7 @@ public struct Move
     }
 
     public override string ToString() => $"start{start}, end{end}; {piece}" + 
-        (capturedPiece != ' ' ? "x" + capturedPiece : "" + (isCastle ? "O-O" : ""));
+        (capturedPiece != ' ' ? "x" + capturedPiece : "" + (isPromotion ? "-promote" : "") + (isCastle ? "O-O" : ""));
 
     public int start;       //origin and destination squares (0 - 63)
     public int end;

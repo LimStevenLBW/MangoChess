@@ -131,6 +131,24 @@ public class Square : MonoBehaviour
         currentPiece.transform.position = pos;
     }
 
+    //Move a new piece into this square
+    public void PromotePawn(Piece piece)
+    {
+        Vector3 pos = transform.position;
+        pos.y += .05f;
+        if (currentPiece != null)
+        {
+            Destroy(currentPiece.gameObject);
+        }
+
+
+
+        if (char.IsUpper(piece.GetCode())) CreatePiece('Q');
+        else CreatePiece('q');
+
+        Destroy(piece.gameObject);
+    }
+
     //Getter
     public Piece GetCurrentPiece()
     {
