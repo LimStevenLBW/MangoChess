@@ -196,7 +196,7 @@ public class Game : MonoBehaviour
         else computerSide = true;
 
         mCalculator.NewLine();
-        mCalculator.AlphaBetaSearch(3, -10000f, 10000f, board, computerSide);
+        mCalculator.AlphaBetaSearch(2, -10000f, 10000f, board, computerSide);
         Move move = mCalculator.GetMove();
 
         //List<Move> moves = new List<Move>();

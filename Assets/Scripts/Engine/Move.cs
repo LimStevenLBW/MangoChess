@@ -14,7 +14,7 @@ public struct Move
         this.capturedPiece = capturedPiece;
     }
 
-    public override string ToString() => $"start{start}, end{end}; {char.ToUpper(piece)}" + 
+    public override string ToString() => $"start{start}, end{end}; {piece}" + 
         (capturedPiece != ' ' ? "x" + capturedPiece : "" + (isCastle ? "O-O" : ""));
 
     public int start;       //origin and destination squares (0 - 63)

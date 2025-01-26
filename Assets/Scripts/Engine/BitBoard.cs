@@ -16,7 +16,7 @@ public class BitBoard
     static ulong wKingRook = 128;
     static ulong wQueenRook = 1;
 
-    public string initialFEN = "";
+    public string initialFEN = "r3k2r/8/ppp2ppp/8/PPP2PPP/8/8/R3K2Rca";
 
     //Edge Files
     static ulong A_FILE = 72340172838076673;  //Verified
@@ -225,14 +225,14 @@ public class BitBoard
     public List<Move> GetPossibleMovesWhite()
     {
         //CheckForWhtRookChanges();
-        List<Move> moveList = GetRookMoves("", wht_Rooks, 'R');
+        List<Move> moveList = GetWhitePawnMoves("", wht_Pawns, 'P');
         moveList.AddRange(GetKnightMoves("", wht_Knights, 'N'));
         moveList.AddRange(GetBishopMoves("", wht_Bishops, 'B'));
-        moveList.AddRange(GetWhitePawnMoves("", wht_Pawns, 'P'));
-        moveList.AddRange(GetKingMoves("", wht_King, 'K'));
-
         moveList.AddRange(GetRookMoves("", wht_Queens, 'Q'));
         moveList.AddRange(GetBishopMoves("", wht_Queens, 'Q'));
+        moveList.AddRange(GetRookMoves("", wht_Rooks, 'R'));
+        moveList.AddRange(GetKingMoves("", wht_King, 'K'));
+
 
         AVAILABLE_MOVES = 0; //Reset available moves
         return moveList;
@@ -244,14 +244,14 @@ public class BitBoard
     public List<Move> GetPossibleMovesBlack()
     {
         //CheckForBlkRookChanges();
-        List<Move> moveList = GetRookMoves("", blk_Rooks, 'r');
+        List<Move> moveList = GetBlackPawnMoves("", Blk_Pawns, 'p');
         moveList.AddRange(GetKnightMoves("", blk_Knights, 'n'));
         moveList.AddRange(GetBishopMoves("", blk_Bishops, 'b'));
-        moveList.AddRange(GetBlackPawnMoves("", Blk_Pawns, 'p'));
-        moveList.AddRange(GetKingMoves("", blk_King, 'k'));
-
         moveList.AddRange(GetRookMoves("", blk_Queens, 'q'));
         moveList.AddRange(GetBishopMoves("", blk_Queens, 'q'));
+        moveList.AddRange(GetRookMoves("", blk_Rooks, 'r'));
+        moveList.AddRange(GetKingMoves("", blk_King, 'k'));
+
 
         AVAILABLE_MOVES = 0; //Reset available moves
         return moveList;
@@ -452,7 +452,6 @@ public class BitBoard
             Move m = new Move(i - 7, i, code, false, false, false, capturedPiece: c);
             moveList.Add(m);   
         }
-
     }
 
     //FORWARD MOVE ONCE
