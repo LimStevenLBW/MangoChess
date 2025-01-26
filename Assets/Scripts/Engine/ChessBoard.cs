@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ChessBoard : MonoBehaviour
 {
+    public string FEN;
     private BitBoard board;
     [SerializeField] private List<ChessBoardFile> files = new List<ChessBoardFile>();
 
@@ -15,7 +16,7 @@ public class ChessBoard : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        board = new BitBoard(files);
+        board = new BitBoard(FEN, files);
         Game.Instance.InitializeData(board);
     }
 

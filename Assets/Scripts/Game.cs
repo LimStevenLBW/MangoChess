@@ -172,8 +172,6 @@ public class Game : MonoBehaviour
         else if (selectedPiece.GetCode() == 'p' && destination.GetID() < 8) destination.PromotePawn(selectedPiece);
         else destination.SetNewPiece(selectedPiece);
 
-
-
         selectedPiece.DisableOutline();
         selectedPiece = null;
 
@@ -221,14 +219,15 @@ public class Game : MonoBehaviour
         }
 
         RecordMove(move);
+
         Square start = board.GetSquareFromIndex(move.start);
         Square end = board.GetSquareFromIndex(move.end);
         Piece piece = start.GetCurrentPiece();
         
 
         //King has moved
-        if (move.piece == 'k') board.HandleBlackCastling(move.start);
-        if (move.piece == 'K') board.HandleWhiteCastling(move.start);
+        if (move.piece == 'k') board.HandleBlackCastling(move.end);
+        if (move.piece == 'K') board.HandleWhiteCastling(move.end);
 
         //Pawn promote, buggy, but seems to work as long as pawn promotion isnt the first move
         if (piece.GetCode() == 'P' && move.end >= 56) end.PromotePawn(piece);

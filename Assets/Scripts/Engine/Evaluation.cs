@@ -170,10 +170,14 @@ public class Evaluation
             }
         }
 
+        //Castled Bonus
+        if (board.isWhiteCastled) bonus += 0.4f;
+        if (board.isBlackCastled) bonus -= 0.4f;
+
         //Safe King Bonus White
         for (int i = 0; i < 8; i++)
         {
-            if (bPieceCount > 1) break; //King should participate if piece count is low
+            if (bPieceCount < 2) break; //King should participate if piece count is low
             if (((board.Wht_King >> i) & 1) == 1)
             {
                 if (i >= 0 && i < 3) bonus += 0.2f;
@@ -184,7 +188,7 @@ public class Evaluation
         //Safe King Bonus Black
         for (int i = 56; i < 64; i++)
         {
-            if (wPieceCount > 1) break;
+            if (wPieceCount < 2) break;
             if (((board.Blk_King >> i) & 1) == 1)
             {
                 if (i >= 56 && i < 59) bonus -= 0.2f;

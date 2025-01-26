@@ -6,6 +6,8 @@ using UnityEngine;
 public class BitBoard
 {
     //Castling Rights
+    public bool isWhiteCastled = false;
+    public bool isBlackCastled = false;
     private bool whtCanQueenSideCastle = true;
     private bool whtCanKingSideCastle = true;
     private bool blkCanQueenSideCastle = true;
@@ -16,7 +18,7 @@ public class BitBoard
     static ulong wKingRook = 128;
     static ulong wQueenRook = 1;
 
-    public string initialFEN = "1r3rk1/3np1bp/BPp1bnq1/5p2/2NB2pR/1NQ3P1/R1P1pPPK/8";
+    public string initialFEN = "";
 
     //Edge Files
     static ulong A_FILE = 72340172838076673;  //Verified
@@ -82,8 +84,9 @@ public class BitBoard
     #endregion
     public BitBoard() { }
    
-    public BitBoard(List<ChessBoardFile> files)
+    public BitBoard(string FEN, List<ChessBoardFile> files)
     {
+        if (FEN != "") initialFEN = FEN;
         this.files = files;
 
         //Set the IDs for the squares
@@ -131,11 +134,13 @@ public class BitBoard
         copy.wht_Queens = wht_Queens;
         copy.wht_King = wht_King;
 
-        copy.CopyRules(whtCanQueenSideCastle, whtCanKingSideCastle, blkCanQueenSideCastle, blkCanKingSideCastle);
+        copy.CopyRules(isWhiteCastled, isBlackCastled, whtCanQueenSideCastle, whtCanKingSideCastle, blkCanQueenSideCastle, blkCanKingSideCastle);
         return copy;
     }
 
-    public void CopyRules(bool wQCastle, bool wKCastle, bool bQCastle, bool bKCastle){ 
+    public void CopyRules(bool isWhiteCastled, bool isBlackCastled, bool wQCastle, bool wKCastle, bool bQCastle, bool bKCastle){
+        this.isWhiteCastled = isWhiteCastled;
+        this.isBlackCastled = isBlackCastled;
         whtCanQueenSideCastle = wQCastle;
         whtCanKingSideCastle = wKCastle;
         blkCanQueenSideCastle = bQCastle;
@@ -1099,12 +1104,12 @@ public class BitBoard
         if (char.IsUpper(code)) //White
         {
             if (whtCanKingSideCastle) KING_MOVES += (king << 2) & EMPTY_SQUARES & (EMPTY_SQUARES << 1);
-            if (whtCanQueenSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1);  
+            if (whtCanQueenSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1) & (EMPTY_SQUARES >> 1);  
         }
         else
         {
             if (blkCanKingSideCastle) KING_MOVES += (king << 2) & EMPTY_SQUARES & (EMPTY_SQUARES << 1);
-            if (blkCanQueenSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1);
+            if (blkCanQueenSideCastle) KING_MOVES += (king >> 2) & EMPTY_SQUARES & (EMPTY_SQUARES >> 1) & (EMPTY_SQUARES >> 1);
         }
 
         for (int i = 0; i < 64; i++) 
@@ -1339,8 +1344,34 @@ public class BitBoard
         //private ulong wht_Pawns, wht_Knights, wht_Bishops, wht_Rooks, wht_King, wht_Queens;
         if (m.isCastle)
         {
-            if (char.IsUpper(m.piece)) { whtCanKingSideCastle = false; whtCanQueenSideCastle = false; }
-            else { blkCanKingSideCastle = false; blkCanQueenSideCastle = false; }
+            if (char.IsUpper(m.piece)) {
+                whtCanKingSideCastle = false;
+                whtCanQueenSideCastle = false;
+                wht_King &= ~(1ul << m.start);
+                wht_King |= (1ul << m.end);
+                if (m.end == 6) { //White King Side Castle
+                    wht_Rooks &= ~(1ul << 7);
+                    wht_Rooks |= (1ul << 5);
+                }
+                else if (m.end == 2){ //White Queen Side Castle
+                    wht_Rooks &= ~(1ul << 0);
+                    wht_Rooks |= (1ul << 3);
+                }
+            }
+            else {
+                blkCanKingSideCastle = false;
+                blkCanQueenSideCastle = false;
+                blk_King &= ~(1ul << m.start);
+                blk_King |= (1ul << m.end);
+                if (m.end == 6) { //Black King Side Castle
+                    blk_Rooks &= ~(1ul << 63);
+                    blk_Rooks |= (1ul << 61);
+                }
+                else if (m.end == 2) { //Black Queen Side Castle
+                    blk_Rooks &= ~(1ul << 56);
+                    blk_Rooks |= (1ul << 59);
+                }
+            }
         }
         else
         {   //(((blk_Pawns >> m.start) & 1) == 1) maybe not necessary, supposed to have been calculated earlier?
@@ -1354,7 +1385,12 @@ public class BitBoard
                 case 'b': blk_Bishops &= ~(1ul << m.start); blk_Bishops |= (1ul << m.end); break;
                 case 'r': blk_Rooks &= ~(1ul << m.start); blk_Rooks |= (1ul << m.end); break;
                 case 'q': blk_Queens &= ~(1ul << m.start); blk_Queens |= (1ul << m.end); break;
-                case 'k': blk_King &= ~(1ul << m.start); blk_King |= (1ul << m.end); break;
+                case 'k':
+                    blk_King &= ~(1ul << m.start);
+                    blk_King |= (1ul << m.end);
+                    blkCanKingSideCastle = false;
+                    blkCanQueenSideCastle = false;
+                    break;
 
                 case 'P': wht_Pawns &= ~(1ul << m.start);
                     if (m.isPromotion) wht_Queens |= (1ul << m.end);
@@ -1364,7 +1400,12 @@ public class BitBoard
                 case 'B': wht_Bishops &= ~(1ul << m.start); wht_Bishops |= (1ul << m.end); break;
                 case 'R': wht_Rooks &= ~(1ul << m.start); wht_Rooks |= (1ul << m.end); break;
                 case 'Q': wht_Queens &= ~(1ul << m.start); wht_Queens |= (1ul << m.end); break;
-                case 'K': wht_King &= ~(1ul << m.start); wht_King |= (1ul << m.end); break;
+                case 'K':
+                    wht_King &= ~(1ul << m.start);
+                    wht_King |= (1ul << m.end);
+                    whtCanKingSideCastle = false;
+                    whtCanQueenSideCastle = false;
+                    break;
             }
         }
 
