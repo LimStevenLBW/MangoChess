@@ -33,8 +33,8 @@ public class MoveCalculator
         line = new List<Move>();
         line.Add(new Move());
         line.Add(new Move());
-     //   line.Add(new Move());
-      //  line.Add(new Move());
+        line.Add(new Move());
+        line.Add(new Move());
 
     }
 

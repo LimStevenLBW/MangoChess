@@ -16,7 +16,7 @@ public class BitBoard
     static ulong wKingRook = 128;
     static ulong wQueenRook = 1;
 
-    public string initialFEN = "r3k2r/8/ppp2ppp/8/PPP2PPP/8/8/R3K2Rca";
+    public string initialFEN = "";
 
     //Edge Files
     static ulong A_FILE = 72340172838076673;  //Verified

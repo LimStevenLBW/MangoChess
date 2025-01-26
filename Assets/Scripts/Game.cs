@@ -80,7 +80,7 @@ public class Game : MonoBehaviour
         computerSide = Side.White;
         gameUI.ShowPlayerToMoveLabel(playerSide);
 
-        StartCoroutine(ComputerTakeTurn());
+        ComputerTakeTurn();
     }
 
     public void ClearAllSelections()
@@ -117,11 +117,6 @@ public class Game : MonoBehaviour
         */
     }
 
-    public void Deselect(Piece piece)
-    {
-
-    }
-
     public void Hover(Piece piece)
     {
         piece.EnableOutline();
@@ -143,7 +138,7 @@ public class Game : MonoBehaviour
         else if (SideToMove == Side.Black) SideToMove = Side.White;
         gameUI.ShowPlayerToMoveLabel(SideToMove);
 
-        if (playerSide != SideToMove) StartCoroutine(ComputerTakeTurn());
+        if (playerSide != SideToMove) ComputerTakeTurn();
     }
 
     /*
@@ -166,7 +161,6 @@ public class Game : MonoBehaviour
         else
         {
             sfx.PlayCaptureSFX();
-            Debug.Log(capture);
         }
 
         if (selectedPiece.GetCode() == 'k') board.HandleBlackCastling(destination.GetID());
@@ -181,37 +175,44 @@ public class Game : MonoBehaviour
 
         gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
 
+        if (selectedPiece != null) Select(selectedPiece); //Re-select to prevent move exploit
         SwapPlayerTurn();
     }
 
-    IEnumerator ComputerTakeTurn()
+    void ComputerTakeTurn()
     {
-        System.Random r = new System.Random();
-        float num = (float)(r.NextDouble() + 0.5f);
-        yield return new WaitForSeconds(num);
-
-
         bool computerSide;
         if (playerSide == Side.White) computerSide = false;
         else computerSide = true;
 
         mCalculator.NewLine();
-        mCalculator.AlphaBetaSearch(2, -10000f, 10000f, board, computerSide);
+        mCalculator.AlphaBetaSearch(4, -10000f, 10000f, board, computerSide);
         Move move = mCalculator.GetMove();
 
         //List<Move> moves = new List<Move>();
         //if (SideToMove == Side.Black) moves = board.GetPossibleMovesBlack();
         //if (SideToMove == Side.White) moves = board.GetPossibleMovesWhite();
         //Move move = mCalculator.GetRandomMove(moves);
-        
+
         Debug.Log("CPU did " + move.ToString());
 
-        ComputerCompleteMove(move);
+        StartCoroutine(ComputerCompleteMove(move));
     }
 
-    void ComputerCompleteMove(Move move)
+    IEnumerator ComputerCompleteMove(Move move)
     {
-        sfx.PlayMoveSFX();
+        System.Random r = new System.Random();
+        float num = (float)(r.NextDouble() + 0.5f);
+        yield return new WaitForSeconds(num);
+
+        if (move.capturedPiece == ' ')
+        {
+            sfx.PlayMoveSFX();
+        }
+        else
+        {
+            sfx.PlayCaptureSFX();
+        }
 
         RecordMove(move);
         Square start = board.GetSquareFromIndex(move.start);
@@ -231,6 +232,8 @@ public class Game : MonoBehaviour
         gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
 
         SwapPlayerTurn();
+        if (selectedPiece != null) Select(selectedPiece); //Re-select to prevent move exploit
+
     }
 
     void RecordMove(Move move)
