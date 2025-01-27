@@ -7,6 +7,7 @@ public class Game : MonoBehaviour
     public Side SideToMove = Side.White;
     public bool DEBUG_MODE;
 
+    public ChessBoard chessboard;
     public GameUI gameUI;
     public MoveCalculator mCalculator;
     public GameAdvantage gameAdvantage;
@@ -16,7 +17,7 @@ public class Game : MonoBehaviour
     public GameObject victory;
     public GameObject gameover;
     public GameObject stalemate;
-
+    
     private BitBoard board;
     private Evaluation evaluator;
     private List<Move> moveHistory;
@@ -48,6 +49,13 @@ public class Game : MonoBehaviour
         {
             instance = this;
         }
+    }
+
+    void Start()
+    {
+        chessboard.Setup();
+        board = chessboard.GetBitBoard();
+        InitializeData(board);
     }
 
     public void InitializeData(BitBoard board)

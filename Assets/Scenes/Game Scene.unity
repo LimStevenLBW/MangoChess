@@ -39442,6 +39442,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SideToMove: 1
   DEBUG_MODE: 0
+  chessboard: {fileID: 2148335857770495126}
   gameUI: {fileID: 8306028087200419327}
   gameAdvantage: {fileID: 22414262}
   sfx: {fileID: 1026302601}

@@ -14,7 +14,6 @@ public class Square : MonoBehaviour
     private MeshRenderer mesh;
     private bool isMovementSquare = false;
 
-
     //Pieces are ignored because they are on the ignore raycast layer
     void OnMouseOver()
     { 
@@ -56,9 +55,6 @@ public class Square : MonoBehaviour
     {
         mesh = GetComponent<MeshRenderer>();
         if (defaultMat == null) defaultMat = mesh.material;
-
-        ID_TEXT = transform.GetChild(0).GetComponent<TextMeshPro>();
-        if (Game.Instance.DEBUG_MODE == false) ID_TEXT.gameObject.SetActive(false);
         else DisplayID();
 
         //Piece piece = Instantiate(defaultPiece, pos, Quaternion.identity);
@@ -67,6 +63,10 @@ public class Square : MonoBehaviour
     public void SetID(int id)
     {
         idNumber = id;
+
+
+        ID_TEXT = transform.GetChild(0).GetComponent<TextMeshPro>();
+        if (Game.Instance.DEBUG_MODE == false) ID_TEXT.gameObject.SetActive(false);
         ID_TEXT.SetText("" + idNumber);
     }
 

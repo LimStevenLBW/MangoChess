@@ -14,10 +14,9 @@ public class ChessBoard : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    public void Setup()
     {
         board = new BitBoard(FEN, files);
-        Game.Instance.InitializeData(board);
     }
 
     public void Reset()
