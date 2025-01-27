@@ -160,8 +160,8 @@ public class Square : MonoBehaviour
     {
         if (currentPiece)
         {
-            currentPiece = null;
             Destroy(currentPiece.gameObject);
+            currentPiece = null;  
         }
     }
 

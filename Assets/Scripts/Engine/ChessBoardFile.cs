@@ -36,7 +36,7 @@ public class ChessBoardFile : MonoBehaviour
     {
         foreach(Square s in square)
         {
-            s.ClearPiece();
+            s.ClearPiece();      
         }
     }
     

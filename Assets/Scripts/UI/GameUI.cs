@@ -21,6 +21,14 @@ public class GameUI : MonoBehaviour
         } 
     }
 
+    public void HideHud()
+    {
+        foreach (GameObject obj in hudObjects)
+        {
+            obj.SetActive(false);
+        }
+    }
+
     public void ShowHud()
     {
         foreach (GameObject obj in hudObjects)

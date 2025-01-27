@@ -20,6 +20,11 @@ public class ChessBoard : MonoBehaviour
         Game.Instance.InitializeData(board);
     }
 
+    public void Reset()
+    {
+        board.ResetStartingPosition();
+    }
+
     // Update is called once per frame
     void Update()
     {

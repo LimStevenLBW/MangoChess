@@ -11,9 +11,19 @@ public class MoveCalculator
 
     private List<Move> line;
 
-    public Move GetMove()
-    {
-        //GetLine();
+    public Move GetMove(bool side)
+    { 
+        char piece = line[line.Count - 1].piece;
+
+        if (side == true && char.IsUpper(piece)) return line[line.Count - 1];
+        else if (side == false && char.IsLower(piece)) return line[line.Count - 1];
+        else
+        {
+            Debug.Log("Move does not match for piece: " + piece + ", returning random move instead.");
+            if (side == true) return GetRandomMove(board.GetPossibleMovesWhite());
+            if (side == false) return GetRandomMove(board.GetPossibleMovesBlack());
+        }
+        
         return line[line.Count - 1];
     }
 

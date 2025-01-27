@@ -1203,7 +1203,7 @@ public class BitBoard
 
         if (kingLocation == 62) //King-Side Castle
         {
-            Square rookSqr = GetSquareFromIndex(64);
+            Square rookSqr = GetSquareFromIndex(63);
             Square nxtRookSqr = GetSquareFromIndex(61);
             nxtRookSqr.SetNewPiece(rookSqr.GetCurrentPiece());
             rookSqr.ClearReference();

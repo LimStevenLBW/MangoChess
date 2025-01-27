@@ -13,9 +13,15 @@ public class Game : MonoBehaviour
 
     public AudioSFX sfx;
 
+    public GameObject victory;
+    public GameObject gameover;
+    public GameObject stalemate;
+
     private BitBoard board;
     private Evaluation evaluator;
     private List<Move> moveHistory;
+
+    private bool isGameOver;
 
     public enum Side
     {
@@ -65,6 +71,8 @@ public class Game : MonoBehaviour
 
     public void StartGameAsWhite()
     {
+        ClearAllSelections();
+        isGameOver = false;
         gameUI.HideMenu();
         gameUI.ShowHud();
         playerSide = Side.White;
@@ -74,6 +82,8 @@ public class Game : MonoBehaviour
 
     public void StartGameAsBlack()
     {
+        ClearAllSelections();
+        isGameOver = false;
         gameUI.HideMenu();
         gameUI.ShowHud();
         playerSide = Side.Black;
@@ -155,21 +165,30 @@ public class Game : MonoBehaviour
 
         Piece capture = destination.GetCurrentPiece();
 
-        if(capture == null)
+        if (capture == null) sfx.PlayMoveSFX();
+        else if (capture.GetCode() == 'k' || capture.GetCode() == 'K')
         {
-            sfx.PlayMoveSFX();
+            isGameOver = true;
+            DisplayVictory();
+            sfx.PlayVictorySFX();
         }
-        else
-        {
-            sfx.PlayCaptureSFX();
-        }
+        else sfx.PlayCaptureSFX();
+
         //Special Cases
         if (selectedPiece.GetCode() == 'k') board.HandleBlackCastling(destination.GetID());
         if (selectedPiece.GetCode() == 'K') board.HandleWhiteCastling(destination.GetID());
-        
+
         //Pawn promote, buggy, but seems to work as long as pawn promotion isnt the first move
-        if (selectedPiece.GetCode() == 'P' && destination.GetID() >= 56) destination.PromotePawn(selectedPiece);
-        else if (selectedPiece.GetCode() == 'p' && destination.GetID() < 8) destination.PromotePawn(selectedPiece);
+        if (selectedPiece.GetCode() == 'P' && destination.GetID() >= 56)
+        {
+            sfx.PlayPromoteSFX();
+            destination.PromotePawn(selectedPiece);
+        }
+        else if (selectedPiece.GetCode() == 'p' && destination.GetID() < 8)
+        {
+            sfx.PlayPromoteSFX();
+            destination.PromotePawn(selectedPiece);
+        }
         else destination.SetNewPiece(selectedPiece);
 
         selectedPiece.DisableOutline();
@@ -180,7 +199,7 @@ public class Game : MonoBehaviour
         gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
 
         if (selectedPiece != null) Select(selectedPiece); //Re-select to prevent move exploit
-        SwapPlayerTurn();
+        if (!isGameOver) SwapPlayerTurn();
     }
 
     void ComputerTakeTurn()
@@ -191,7 +210,7 @@ public class Game : MonoBehaviour
 
         mCalculator.NewLine();
         mCalculator.AlphaBetaSearch(4, -10000f, 10000f, board, computerSide);
-        Move move = mCalculator.GetMove();
+        Move move = mCalculator.GetMove(computerSide);
 
         //List<Move> moves = new List<Move>();
         //if (SideToMove == Side.Black) moves = board.GetPossibleMovesBlack();
@@ -209,14 +228,14 @@ public class Game : MonoBehaviour
         float num = (float)(r.NextDouble() + 0.5f);
         yield return new WaitForSeconds(num);
 
-        if (move.capturedPiece == ' ')
+        if (move.capturedPiece == ' ') sfx.PlayMoveSFX();
+        else if (move.capturedPiece == 'k' || move.capturedPiece == 'K')
         {
-            sfx.PlayMoveSFX();
+            isGameOver = true;
+            DisplayGameOver();
+            sfx.PlayGameOverSFX();
         }
-        else
-        {
-            sfx.PlayCaptureSFX();
-        }
+        else sfx.PlayCaptureSFX();
 
         RecordMove(move);
 
@@ -224,14 +243,21 @@ public class Game : MonoBehaviour
         Square end = board.GetSquareFromIndex(move.end);
         Piece piece = start.GetCurrentPiece();
         
-
         //King has moved
         if (move.piece == 'k') board.HandleBlackCastling(move.end);
         if (move.piece == 'K') board.HandleWhiteCastling(move.end);
 
         //Pawn promote, buggy, but seems to work as long as pawn promotion isnt the first move
-        if (piece.GetCode() == 'P' && move.end >= 56) end.PromotePawn(piece);
-        else if (piece.GetCode() == 'p' && move.end < 8) end.PromotePawn(piece);
+        if (piece.GetCode() == 'P' && move.end >= 56)
+        {
+            sfx.PlayPromoteSFX();
+            end.PromotePawn(piece);
+        }
+        else if (piece.GetCode() == 'p' && move.end < 8)
+        {
+            sfx.PlayPromoteSFX();
+            end.PromotePawn(piece);
+        }
         else end.SetNewPiece(piece);
 
         start.ClearReference();
@@ -241,7 +267,7 @@ public class Game : MonoBehaviour
 
         gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
 
-        SwapPlayerTurn();
+        if(!isGameOver) SwapPlayerTurn();
         if (selectedPiece != null) Select(selectedPiece); //Re-select to prevent move exploit
 
     }
@@ -250,6 +276,28 @@ public class Game : MonoBehaviour
     {
         moveHistory.Add(move);
 
+    }
+
+    public void DisplayVictory()
+    {
+        victory.SetActive(true);
+    }
+    public void DisplayGameOver()
+    {
+        gameover.SetActive(true);
+    }
+    public void DisplayStaleMate()
+    {
+        stalemate.SetActive(true);
+    }
+
+    public void ReturnToMainMenu()
+    {
+        victory.SetActive(false);
+        gameover.SetActive(false);
+        stalemate.SetActive(false);
+        gameUI.ShowMenu();
+        gameUI.HideHud();
     }
 
     // Update is called once per frame
