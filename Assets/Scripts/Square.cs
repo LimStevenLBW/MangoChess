@@ -18,7 +18,7 @@ public class Square : MonoBehaviour
     void OnMouseOver()
     { 
         //On player owned piece
-        if (currentPiece != null && currentPiece.GetSideColor() == Game.Instance.GetPlayerSide())
+        if (currentPiece != null && currentPiece.GetSideColor() == Game.Instance.GetPlayerSide() && !Game.Instance.isGameOver)
         { 
             if (Input.GetMouseButtonDown(0))
             {
@@ -30,7 +30,7 @@ public class Square : MonoBehaviour
                 Game.Instance.Hover(currentPiece);
             }
         }
-        else if(isMovementSquare && Input.GetMouseButtonDown(0))//On a highlighted square
+        else if(isMovementSquare && Input.GetMouseButtonDown(0) && !Game.Instance.isGameOver)//On a highlighted square
         {
             Game.Instance.MakePlayerMove(this);
         }

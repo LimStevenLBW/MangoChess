@@ -98,8 +98,8 @@ public class Evaluation
         float wQueensVal = wQueens * 9;
 
         //King Material
-        float bKingVal = bKing * 1000000;
-        float wKingVal = wKing * 1000000;
+        float bKingVal = bKing * 10000;
+        float wKingVal = wKing * 10000;
 
         /*
         Debug.Log(wPawnsVal);

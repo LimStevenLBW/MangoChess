@@ -22,7 +22,7 @@ public class Game : MonoBehaviour
     private Evaluation evaluator;
     private List<Move> moveHistory;
 
-    private bool isGameOver;
+    public bool isGameOver { get; private set; }
 
     public enum Side
     {
@@ -77,10 +77,16 @@ public class Game : MonoBehaviour
         return playerSide;
     }
 
+    public void ResetGameStatus()
+    { 
+        isGameOver = false;
+        SideToMove = Side.White;
+        if(gameAdvantage != null && evaluator != null) gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
+    }
     public void StartGameAsWhite()
     {
         ClearAllSelections();
-        isGameOver = false;
+        ResetGameStatus();
         gameUI.HideMenu();
         gameUI.ShowHud();
         playerSide = Side.White;
@@ -91,7 +97,7 @@ public class Game : MonoBehaviour
     public void StartGameAsBlack()
     {
         ClearAllSelections();
-        isGameOver = false;
+        ResetGameStatus();
         gameUI.HideMenu();
         gameUI.ShowHud();
         playerSide = Side.Black;
@@ -225,7 +231,7 @@ public class Game : MonoBehaviour
         //if (SideToMove == Side.White) moves = board.GetPossibleMovesWhite();
         //Move move = mCalculator.GetRandomMove(moves);
 
-        Debug.Log("CPU did " + move.ToString());
+        if(DEBUG_MODE) Debug.Log("CPU did " + move.ToString());
 
         StartCoroutine(ComputerCompleteMove(move));
     }

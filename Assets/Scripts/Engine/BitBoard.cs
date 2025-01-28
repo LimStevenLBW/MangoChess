@@ -108,6 +108,16 @@ public class BitBoard
 
     public void ResetStartingPosition()
     {
+        Game.Instance.ResetGameStatus();
+
+        //Reset Castling Rights
+        isWhiteCastled = false;
+        isBlackCastled = false;
+        whtCanQueenSideCastle = true;
+        whtCanKingSideCastle = true;
+        blkCanQueenSideCastle = true;
+        blkCanKingSideCastle = true;
+
         string defaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         if (initialFEN != "") defaultFEN = initialFEN;
         //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
