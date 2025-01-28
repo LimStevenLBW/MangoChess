@@ -38,13 +38,14 @@ public class MoveCalculator
     }
 
     //Make sure to reset the line before using alpha beta
-    public void NewLine()
+    public void NewLine(int depth)
     {
         line = new List<Move>();
-        line.Add(new Move());
-        line.Add(new Move());
-        line.Add(new Move());
-        line.Add(new Move());
+
+        for(int i=0; i < depth; i++)
+        {
+            line.Add(new Move());
+        }
 
     }
 

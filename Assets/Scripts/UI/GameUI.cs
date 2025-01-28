@@ -7,6 +7,12 @@ public class GameUI : MonoBehaviour
     public PlayerToMoveLabel playerToMoveLabel;
     public List<GameObject> menuObjects;
     public List<GameObject> hudObjects;
+    public Check checkText;
+
+    public void ShowCheck()
+    {
+        checkText.ShowCheck();
+    }
     public void ShowPlayerToMoveLabel(Game.Side playerSide)
     {
         playerToMoveLabel.UpdateLabel(playerSide);

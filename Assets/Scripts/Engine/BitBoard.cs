@@ -248,7 +248,6 @@ public class BitBoard
         moveList.AddRange(GetRookMoves("", wht_Rooks, 'R'));
         moveList.AddRange(GetKingMoves("", wht_King, 'K'));
 
-
         AVAILABLE_MOVES = 0; //Reset available moves
         return moveList;
     }
@@ -272,7 +271,30 @@ public class BitBoard
         return moveList;
     }
 
-    //Retrieve the bitboard value for all piecesA
+    public bool IsKingChecked(Game.Side side)
+    {
+        if(side == Game.Side.White)
+        {
+            List<Move> moves = GetPossibleMovesBlack();
+            foreach(Move m in moves)
+            {
+                if (m.capturedPiece == 'K') return true;
+            }
+        }
+
+        if (side == Game.Side.Black)
+        {
+            List<Move> moves = GetPossibleMovesWhite();
+            foreach (Move m in moves)
+            {
+                if (m.capturedPiece == 'k') return true;
+            }
+        }
+
+        return false;
+    }
+
+    //Retrieve the bitboard value for all pieces
     public void UpdateBitBoards()
     {
         WHT_CANT_CAPTURE = ~(wht_Pawns | wht_Knights | wht_Bishops | wht_Rooks | wht_King | wht_Queens | blk_King);
@@ -1490,4 +1512,5 @@ public class BitBoard
 
         UpdateBitBoards();
     }
+
 }

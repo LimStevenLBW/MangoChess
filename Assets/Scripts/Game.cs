@@ -11,13 +11,17 @@ public class Game : MonoBehaviour
     public GameUI gameUI;
     public MoveCalculator mCalculator;
     public GameAdvantage gameAdvantage;
+    public Camera whiteCamera;
+    public Camera blackCamera;
 
     public AudioSFX sfx;
 
     public GameObject victory;
     public GameObject gameover;
     public GameObject stalemate;
-    
+
+    public bool EASY_MODE;
+
     private BitBoard board;
     private Evaluation evaluator;
     private List<Move> moveHistory;
@@ -92,6 +96,9 @@ public class Game : MonoBehaviour
         playerSide = Side.White;
         computerSide = Side.Black;
         gameUI.ShowPlayerToMoveLabel(playerSide);
+        whiteCamera.gameObject.SetActive(true);
+        blackCamera.gameObject.SetActive(false);
+        chessboard.SetOrientation(playerSide);
     }
 
     public void StartGameAsBlack()
@@ -103,7 +110,9 @@ public class Game : MonoBehaviour
         playerSide = Side.Black;
         computerSide = Side.White;
         gameUI.ShowPlayerToMoveLabel(playerSide);
-
+        whiteCamera.gameObject.SetActive(false);
+        blackCamera.gameObject.SetActive(true);
+        chessboard.SetOrientation(playerSide);
         ComputerTakeTurn();
     }
 
@@ -174,6 +183,7 @@ public class Game : MonoBehaviour
         if (playerSide != SideToMove) return;
 
         ClearAllSelections();
+
         Square formerSquare = selectedPiece.GetSquare();
         formerSquare.ClearReference();
 
@@ -213,18 +223,48 @@ public class Game : MonoBehaviour
         gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
 
         if (selectedPiece != null) Select(selectedPiece); //Re-select to prevent move exploit
-        if (!isGameOver) SwapPlayerTurn();
+
+        if (evaluator.InsufficientPieces()) //Stalemate
+        {
+            isGameOver = true;
+            DisplayStaleMate();
+            sfx.PlayGameOverSFX();
+        }
+
+
+        if (!isGameOver)
+        {
+
+            if (board.IsKingChecked(computerSide))
+            {
+                gameUI.ShowCheck();
+                sfx.PlayCheckSFX(); //CHECK
+            }
+
+            SwapPlayerTurn();
+        }
     }
 
     void ComputerTakeTurn()
     {
-        bool computerSide;
-        if (playerSide == Side.White) computerSide = false;
-        else computerSide = true;
+        bool engineBool;
+        if (playerSide == Side.White) engineBool = false;
+        else engineBool = true;
 
-        mCalculator.NewLine();
-        mCalculator.AlphaBetaSearch(4, -10000f, 10000f, board, computerSide);
-        Move move = mCalculator.GetMove(computerSide);
+        int DEPTH = 4;
+
+        if (EASY_MODE)
+        {
+            System.Random r = new System.Random();
+
+            if (r.Next(1,10) < 7) DEPTH = 3;
+            else DEPTH = 4;
+        }
+        else DEPTH = 4;
+
+        mCalculator.NewLine(DEPTH);
+        mCalculator.AlphaBetaSearch(DEPTH, -10000f, 10000f, board, engineBool);
+        Move move = mCalculator.GetMove(engineBool);
 
         //List<Move> moves = new List<Move>();
         //if (SideToMove == Side.Black) moves = board.GetPossibleMovesBlack();
@@ -239,7 +279,7 @@ public class Game : MonoBehaviour
     IEnumerator ComputerCompleteMove(Move move)
     {
         System.Random r = new System.Random();
-        float num = (float)(r.NextDouble() + 0.5f);
+        float num = (float)(r.NextDouble() + 0.3f);
         yield return new WaitForSeconds(num);
 
         if (move.capturedPiece == ' ') sfx.PlayMoveSFX();
@@ -251,7 +291,7 @@ public class Game : MonoBehaviour
         }
         else sfx.PlayCaptureSFX();
 
-        RecordMove(move);
+        //RecordMove(move);
 
         Square start = board.GetSquareFromIndex(move.start);
         Square end = board.GetSquareFromIndex(move.end);
@@ -281,7 +321,24 @@ public class Game : MonoBehaviour
 
         gameAdvantage.UpdateAdvantage(evaluator.GetEvaluation(board));
 
-        if(!isGameOver) SwapPlayerTurn();
+        if (evaluator.InsufficientPieces()) //Stalemate
+        {
+            isGameOver = true;
+            DisplayStaleMate();
+            sfx.PlayGameOverSFX();
+        }
+
+
+        if (!isGameOver)
+        {
+            if (board.IsKingChecked(playerSide))
+            {
+                gameUI.ShowCheck();
+                sfx.PlayCheckSFX(); //CHECK
+            }
+
+            SwapPlayerTurn();
+        }
         if (selectedPiece != null) Select(selectedPiece); //Re-select to prevent move exploit
 
     }
@@ -312,6 +369,11 @@ public class Game : MonoBehaviour
         stalemate.SetActive(false);
         gameUI.ShowMenu();
         gameUI.HideHud();
+    }
+
+    public void ToggleEasyMode()
+    {
+        EASY_MODE = !EASY_MODE;
     }
 
     // Update is called once per frame

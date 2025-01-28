@@ -13,6 +13,10 @@ public class Evaluation
     private List<ChessBoardFile> files;
     private List<int> edge = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 15, 16, 23, 24, 31, 32, 39, 40, 47, 48, 55, 56, 57, 58, 59, 60, 61, 62, 63};
 
+    private int bRooks, bKnights, bBishops, bQueens, bPawns, bKing;
+    private int wRooks, wKnights, wBishops, wQueens, wPawns, wKing;
+
+
     public Evaluation(BitBoard board)
     {
         this.board = board;
@@ -44,10 +48,8 @@ public class Evaluation
     private float GetMaterialEval()
     {
         //Counters
-        int bRooks, bKnights, bBishops, bQueens, bPawns, bKing;
-            bRooks = bKnights = bBishops = bQueens = bPawns = bKing = 0;
-        int wRooks, wKnights, wBishops, wQueens, wPawns, wKing;
-            wRooks = wKnights = wBishops = wQueens = wPawns = wKing = 0;
+        bRooks = bKnights = bBishops = bQueens = bPawns = bKing = 0;
+        wRooks = wKnights = wBishops = wQueens = wPawns = wKing = 0;
 
         float eval;
 
@@ -223,6 +225,20 @@ public class Evaluation
         }
         return bonus;
 
+
+    }
+
+    //Not enough pieces to win
+    public bool InsufficientPieces()
+    {
+        //  private int bRooks, bKnights, bBishops, bQueens, bPawns, bKing;
+        //  private int wRooks, wKnights, wBishops, wQueens, wPawns, wKing;
+        if (bRooks == 0 && bKnights < 2 && bBishops < 2 && bQueens == 0 && bPawns == 0
+            && wRooks == 0 && wKnights < 2 && wBishops < 2 && wQueens == 0 && wPawns == 0)
+        {
+            return true;
+        }
+        return false;
 
     }
 
