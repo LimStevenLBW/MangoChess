@@ -371,6 +371,16 @@ public class Game : MonoBehaviour
         gameUI.HideHud();
     }
 
+    public void SaveBoardState()
+    {
+
+    }
+
+    public void UndoLastMove()
+    {
+
+    }
+
     public void ToggleEasyMode()
     {
         EASY_MODE = !EASY_MODE;
